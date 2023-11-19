@@ -27,6 +27,9 @@ class App(QMainWindow):
         self.add_btn_2_1.clicked.connect(self.open_second_form)
         self.add_btn_3_1.clicked.connect(self.open_second_form)
         self.del_btn_2_1.clicked.connect(self.del_row)
+        self.del_btn_3_1.clicked.connect(self.del_row)
+        self.del_btn_2_2.clicked.connect(self.del_row)
+        self.del_btn_3_2.clicked.connect(self.del_row)
 
 
 
@@ -54,7 +57,7 @@ class App(QMainWindow):
         self.model2.setHeaderData(0, Qt.Horizontal, "id")
         self.model2.setHeaderData(1, Qt.Horizontal, "type")
         self.model2.select()
-        # Set up the view
+
         self.tableView_3.setModel(self.model1)
         self.tableView_3.resizeColumnsToContents()
 
@@ -68,28 +71,51 @@ class App(QMainWindow):
         self.tableView.resizeColumnsToContents()
 
     def del_row(self):
-        print(1)
+        btn = {'del_btn_2_1': self.tableView_3, 'del_btn_3_1': self.tableView_4,
+               'del_btn_2_2': self.tableView_2, 'del_btn_3_2': self.tableView}
+        table = btn[self.sender().objectName()]
         row = 0
-        for index in sorted(self.tableView_3.selectionModel().selectedRows()):
+        for index in sorted(table.selectionModel().selectedRows()):
             row = index.row()
+            print('row', row)
+        print(row, table.objectName())
         data = []
-        print(2)
-        for col in range(self.tableView_3.model().columnCount() - 1):
-            data.append(self.tableView_3.model().data(self.tableView_3.model().index(row, col + 1)))
-        print(data)
-        print(3)
+        for col in range(table.model().columnCount()):
+            data.append(table.model().data(table.model().index(row, col)))
+        print(data, self.sender().objectName())
 
-
-        data = list(map(str, data))
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.resize(100, 100)
-        type = cur.execute("""SELECT type FROM event_type WHERE id = ?""", (data[1], )).fetchone()[0]
-        msg.setText(f'Вы дейсвительно хотите удалить данные?\ndate: {data[0]}\ntype: {type}({data[1]})\ndescription: {data[2]}')
+        print(2)
+
+
+        if len(data) == 4:
+            print(3)
+            type = 'Null'
+            try:
+                type = cur.execute("""SELECT type FROM event_type WHERE id = ?""", (data[2], )).fetchone()[0]
+                type = f'{type}({data[2]})'
+            except Exception as e:
+                print(e)
+
+            msg.setText(f'''Вы дейсвительно хотите удалить данные?\ndate: {data[1]}\ntype: {type}\ndescription: {data[3]}''')
+
+        else:
+            msg.setText(f'''Вы дейсвительно хотите удалить данные?\ntype: {data[1]}''')
+
         msg.setWindowTitle("Удалить данные")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         retval = msg.exec_()
-        print(msg.clickedButton() == QMessageBox.Cancel)
+
+        if msg.clickedButton().text() == 'OK':
+
+            if len(data) == 4:
+                cur.execute("""DELETE FROM event WHERE id = ?""", (data[0], ))
+            else:
+                cur.execute("""DELETE FROM event_type WHERE id = ?""", (data[0], ))
+            conn.commit()
+            self.load_data()
 
     def open_second_form(self):
             self.second_form = SecondForm(self)
@@ -116,7 +142,7 @@ class SecondForm(QMainWindow):
     def add(self):
         date = self.dateEdit.date().toString('dd.MM.yyyy')
         print(date)
-        type = self.comboBox.currentText()
+        type = cur.execute("SELECT id FROM event_type WHERE type = ?", (self.comboBox.currentText(), )).fetchone()[0]
         print(type)
         description = self.plainTextEdit.toPlainText()
         print(description)
