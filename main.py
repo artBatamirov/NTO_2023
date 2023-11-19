@@ -19,6 +19,13 @@ class App(QMainWindow):
 
         self.tableView_3.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableView_3.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tableView_4.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.tableView_4.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        self.tableView_2.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.tableView_2.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tableView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         self.load_data()
         self.add_btn_2_2.clicked.connect(self.add_type)
@@ -72,7 +79,7 @@ class App(QMainWindow):
 
     def del_row(self):
         btn = {'del_btn_2_1': self.tableView_3, 'del_btn_3_1': self.tableView_4,
-               'del_btn_2_2': self.tableView_2, 'del_btn_3_2': self.tableView}
+               'del_btn_2_2': self.tableView, 'del_btn_3_2': self.tableView_2}
         table = btn[self.sender().objectName()]
         row = 0
         for index in sorted(table.selectionModel().selectedRows()):
