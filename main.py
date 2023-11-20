@@ -78,15 +78,18 @@ class App(QMainWindow):
         self.tableView.resizeColumnsToContents()
 
     def del_row(self):
+        f = True
         btn = {'del_btn_2_1': self.tableView_3, 'del_btn_3_1': self.tableView_4,
                'del_btn_2_2': self.tableView, 'del_btn_3_2': self.tableView_2}
         table = btn[self.sender().objectName()]
-        row = 0
+        row = -1
         for index in sorted(table.selectionModel().selectedRows()):
             row = index.row()
             print('row', row)
         print(row, table.objectName())
         data = []
+        if row == -1:
+            return None
         for col in range(table.model().columnCount()):
             data.append(table.model().data(table.model().index(row, col)))
         print(data, self.sender().objectName())
@@ -94,11 +97,11 @@ class App(QMainWindow):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.resize(100, 100)
-        print(2)
+
 
 
         if len(data) == 4:
-            print(3)
+
             type = 'Null'
             try:
                 type = cur.execute("""SELECT type FROM event_type WHERE id = ?""", (data[2], )).fetchone()[0]
@@ -109,7 +112,18 @@ class App(QMainWindow):
             msg.setText(f'''Вы дейсвительно хотите удалить данные?\ndate: {data[1]}\ntype: {type}\ndescription: {data[3]}''')
 
         else:
-            msg.setText(f'''Вы дейсвительно хотите удалить данные?\ntype: {data[1]}''')
+
+            not_del = conn.execute("""SELECT id FROM event WHERE type = ?""", (data[0],)).fetchall()
+            print(not_del)
+            if len(not_del) == 0:
+                f = True
+
+                msg.setText(f'''Вы дейсвительно хотите удалить данные?\ntype: {data[1]}''')
+            else:
+                f = False
+
+                msg.setText(f'''Нельзя удалить данные\ntype: {data[1]}''')
+
 
         msg.setWindowTitle("Удалить данные")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
@@ -119,7 +133,8 @@ class App(QMainWindow):
 
             if len(data) == 4:
                 cur.execute("""DELETE FROM event WHERE id = ?""", (data[0], ))
-            else:
+            elif f:
+
                 cur.execute("""DELETE FROM event_type WHERE id = ?""", (data[0], ))
             conn.commit()
             self.load_data()
