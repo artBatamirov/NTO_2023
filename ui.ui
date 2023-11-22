@@ -26,8 +26,14 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="tabPosition">
+        <enum>QTabWidget::North</enum>
+       </property>
        <property name="currentIndex">
         <number>1</number>
+       </property>
+       <property name="tabBarAutoHide">
+        <bool>false</bool>
        </property>
        <widget class="QWidget" name="tab1">
         <attribute name="title">
@@ -61,7 +67,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="tab2_1">
           <attribute name="title">
@@ -118,7 +124,7 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-10</y>
              <width>681</width>
              <height>251</height>
             </rect>
@@ -157,6 +163,27 @@
            </layout>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <attribute name="title">
+           <string>Заявки</string>
+          </attribute>
+          <widget class="QTableWidget" name="order_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>251</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab3">
@@ -173,7 +200,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="tab3_1">
           <attribute name="title">
@@ -269,7 +296,30 @@
            </layout>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab_2">
+          <property name="tabletTracking">
+           <bool>false</bool>
+          </property>
+          <attribute name="title">
+           <string>Заявки</string>
+          </attribute>
+          <widget class="QTableWidget" name="order_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>251</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
         </widget>
+       </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>Рабочий стол</string>
+        </attribute>
        </widget>
       </widget>
      </item>
@@ -295,7 +345,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -304,9 +354,9 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroup3_2"/>
   <buttongroup name="buttonGroup2_1"/>
   <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup3_1"/>
-  <buttongroup name="buttonGroup3_2"/>
  </buttongroups>
 </ui>
