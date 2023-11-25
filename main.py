@@ -478,6 +478,9 @@ class App(QMainWindow):
         self.del_btn_2_2.clicked.connect(self.del_row)
         self.del_btn_3_2.clicked.connect(self.del_row)
 
+        self.combo_2_6.currentTextChanged.connect(self.load_desktop)
+        self.combo_3_6.currentTextChanged.connect(self.load_desktop)
+
     def add_type(self):
         type, ok_pressed = QInputDialog.getText(self, 'Введите тип мероприятия', '', )
         if ok_pressed:
@@ -504,20 +507,45 @@ class App(QMainWindow):
             self.model2.setHeaderData(1, Qt.Horizontal, "type")
             self.model2.select()
 
+            self.model4 = QSqlTableModel(self)
+            self.model4.setTable("work_type")
+            self.model4.setEditStrategy(QSqlTableModel.OnFieldChange)
+            self.model4.setHeaderData(0, Qt.Horizontal, "id")
+            self.model4.setHeaderData(1, Qt.Horizontal, "name")
+            self.model4.select()
+
+            self.model5 = QSqlTableModel(self)
+            self.model5.setTable("room")
+            self.model5.setEditStrategy(QSqlTableModel.OnFieldChange)
+            self.model5.setHeaderData(0, Qt.Horizontal, "id")
+            self.model5.setHeaderData(1, Qt.Horizontal, "name")
+            self.model5.select()
+
             self.tableView_3.setModel(self.model1)
             self.tableView_3.resizeColumnsToContents()
-
             self.tableView_4.setModel(self.model1)
             self.tableView_4.resizeColumnsToContents()
 
             self.tableView_2.setModel(self.model2)
             self.tableView_2.resizeColumnsToContents()
-
             self.tableView.setModel(self.model2)
             self.tableView.resizeColumnsToContents()
 
+            self.work_type_2.setModel(self.model4)
+            self.work_type_2.resizeColumnsToContents()
+            self.work_type_3.setModel(self.model4)
+            self.work_type_3.resizeColumnsToContents()
+
+            self.room_1.setModel(self.model5)
+            self.room_1.resizeColumnsToContents()
+            self.room_2.setModel(self.model5)
+            self.room_2.resizeColumnsToContents()
+            self.room_3.setModel(self.model5)
+            self.room_3.resizeColumnsToContents()
+
+            # заявки
             result = cur.execute("""SELECT id, event_id, room_id, date_start, date_end, description, status_id, 
-                                    work_type_id FROM work_order""").fetchall()
+                                                        work_type_id FROM work_order""").fetchall()
             print(result[0])
             self.order_2.setColumnCount(len(result[0]))
             self.order_2.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
@@ -540,9 +568,54 @@ class App(QMainWindow):
 
             self.order_2.resizeColumnsToContents()
             self.order_3.resizeColumnsToContents()
+
+            combo_list = cur.execute("SELECT name FROM work_type").fetchall()
+            for i in combo_list:
+                self.combo_2_6.addItem(i[0])
+                self.combo_3_6.addItem(i[0])
+
+            self.desktop_2.setColumnCount(7)
+            self.desktop_2.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
+                                                      'description', 'work_type_id'])
+            self.desktop_3.setColumnCount(7)
+            self.desktop_3.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
+                                                      'description', 'work_type_id'])
+
+            self.load_desktop()
+
         except Exception as e:
             print(e)
 
+    def load_desktop(self):
+
+        # рабочий стол
+        result = cur.execute("""SELECT id, event_id, room_id, date_start, date_end, description, work_type_id
+                                FROM work_order WHERE status_id = 2""").fetchall()
+        print('desktop', result)
+        print(result[0])
+        id2 = cur.execute("""SELECT id FROM work_type WHERE name = ?""", (self.combo_2_6.currentText(), )).fetchone()[0]
+        id3 = cur.execute("""SELECT id FROM work_type WHERE name = ?""", (self.combo_3_6.currentText(), )).fetchone()[0]
+        print('id', id2, id3)
+
+        self.desktop_2.setRowCount(0)
+        for i, row in enumerate(result):
+            print(row)
+            if row[6] == id2:
+                print('yes')
+                self.desktop_2.setRowCount(self.desktop_2.rowCount() + 1)
+                for j, elem in enumerate(row):
+                    print(j, elem)
+                    self.desktop_2.setItem(i, j, QTableWidgetItem(str(elem)))
+
+        self.desktop_3.setRowCount(0)
+        for i, row in enumerate(result):
+            if row[6] == id3:
+                self.desktop_3.setRowCount(self.desktop_3.rowCount() + 1)
+                for j, elem in enumerate(row):
+                    self.desktop_3.setItem(i, j, QTableWidgetItem(str(elem)))
+
+        self.desktop_2.resizeColumnsToContents()
+        self.desktop_3.resizeColumnsToContents()
     def del_row(self):
         f = True
         btn = {'del_btn_2_1': self.tableView_3, 'del_btn_3_1': self.tableView_4,

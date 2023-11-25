@@ -39,18 +39,59 @@
         <attribute name="title">
          <string>Образование</string>
         </attribute>
-        <widget class="QLabel" name="label">
+        <widget class="QTabWidget" name="tabWidget_4">
          <property name="geometry">
           <rect>
-           <x>30</x>
-           <y>20</y>
-           <width>81</width>
-           <height>31</height>
+           <x>0</x>
+           <y>0</y>
+           <width>691</width>
+           <height>451</height>
           </rect>
          </property>
-         <property name="text">
-          <string>Образование</string>
+         <property name="currentIndex">
+          <number>0</number>
          </property>
+         <widget class="QWidget" name="tab_9">
+          <attribute name="title">
+           <string>Помещения</string>
+          </attribute>
+          <widget class="QTableView" name="room_1">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_13">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>330</y>
+             <width>160</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <item>
+             <widget class="QPushButton" name="add_btn_1_1">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_1_1">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab2">
@@ -67,7 +108,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="tab2_1">
           <attribute name="title">
@@ -163,7 +204,7 @@
            </layout>
           </widget>
          </widget>
-         <widget class="QWidget" name="tab">
+         <widget class="QWidget" name="tab2_3">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -183,6 +224,179 @@
             </rect>
            </property>
           </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_5">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>330</y>
+             <width>239</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QPushButton" name="add_btn_2_3">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_2_3">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="change_btn_2_3">
+              <property name="text">
+               <string>Изменить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab2_4">
+          <attribute name="title">
+           <string>Виды работ</string>
+          </attribute>
+          <widget class="QTableView" name="work_type_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>691</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_7">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>330</y>
+             <width>160</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QPushButton" name="add_btn_2_4">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_2_4">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab2_5">
+          <attribute name="title">
+           <string>Помещения</string>
+          </attribute>
+          <widget class="QTableView" name="room_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_10">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>330</y>
+             <width>160</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QPushButton" name="add_btn_2_5">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_2_5">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab2_6">
+          <attribute name="title">
+           <string>Рабочий стол</string>
+          </attribute>
+          <widget class="QTableWidget" name="desktop_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="combo_2_6">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>290</y>
+             <width>121</width>
+             <height>22</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_11">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>340</y>
+             <width>239</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QPushButton" name="add_btn_2_6">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_2_6">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="change_btn_2_6">
+              <property name="text">
+               <string>Изменить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </widget>
        </widget>
@@ -200,7 +414,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="tab3_1">
           <attribute name="title">
@@ -296,7 +510,7 @@
            </layout>
           </widget>
          </widget>
-         <widget class="QWidget" name="tab_2">
+         <widget class="QWidget" name="tab3_3">
           <property name="tabletTracking">
            <bool>false</bool>
           </property>
@@ -313,13 +527,181 @@
             </rect>
            </property>
           </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_6">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>330</y>
+             <width>239</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QPushButton" name="add_btn_3_3">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_3_3">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="change_btn_3_3">
+              <property name="text">
+               <string>Изменить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab3_4">
+          <attribute name="title">
+           <string>Виды работ</string>
+          </attribute>
+          <widget class="QTableView" name="work_type_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_8">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>330</y>
+             <width>160</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QPushButton" name="add_btn_3_4">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_3_4">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab3_5">
+          <attribute name="title">
+           <string>Помещения</string>
+          </attribute>
+          <widget class="QTableView" name="room_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_9">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>330</y>
+             <width>160</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QPushButton" name="add_btn_3_5">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_3_5">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab3_6">
+          <attribute name="title">
+           <string>Рабочий стол</string>
+          </attribute>
+          <widget class="QTableWidget" name="desktop_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="combo_3_6">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>300</y>
+             <width>111</width>
+             <height>22</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_12">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>330</y>
+             <width>239</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QPushButton" name="add_btn_3_6">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_3_6">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="change_btn_3_6">
+              <property name="text">
+               <string>Изменить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </widget>
-       </widget>
-       <widget class="QWidget" name="tab_3">
-        <attribute name="title">
-         <string>Рабочий стол</string>
-        </attribute>
        </widget>
       </widget>
      </item>
@@ -354,9 +736,9 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup3_2"/>
   <buttongroup name="buttonGroup2_1"/>
-  <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup3_1"/>
  </buttongroups>
 </ui>
