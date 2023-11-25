@@ -467,6 +467,24 @@ class App(QMainWindow):
         self.tableView.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
 
+        self.work_type_2.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.work_type_2.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.work_type_3.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.work_type_3.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        self.room_1.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.room_1.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.room_2.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.room_2.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.room_3.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.room_3.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        self.order_2.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.order_2.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.order_3.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.order_3.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+
         self.load_data()
         self.add_btn_2_2.clicked.connect(self.add_type)
         self.add_btn_3_2.clicked.connect(self.add_type)
@@ -478,6 +496,21 @@ class App(QMainWindow):
         self.del_btn_2_2.clicked.connect(self.del_row)
         self.del_btn_3_2.clicked.connect(self.del_row)
 
+        self.del_btn_2_4.clicked.connect(self.del_row_name)
+        self.del_btn_2_5.clicked.connect(self.del_row_name)
+        self.del_btn_3_4.clicked.connect(self.del_row_name)
+        self.del_btn_3_5.clicked.connect(self.del_row_name)
+        self.del_btn_1_1.clicked.connect(self.del_row_name)
+
+        self.add_btn_2_4.clicked.connect(self.add_name)
+        self.add_btn_2_5.clicked.connect(self.add_name)
+        self.add_btn_3_4.clicked.connect(self.add_name)
+        self.add_btn_3_5.clicked.connect(self.add_name)
+        self.add_btn_1_1.clicked.connect(self.add_name)
+
+        self.del_btn_2_3.clicked.connect(self.del_order)
+        self.del_btn_3_3.clicked.connect(self.del_order)
+
         self.combo_2_6.currentTextChanged.connect(self.load_desktop)
         self.combo_3_6.currentTextChanged.connect(self.load_desktop)
 
@@ -486,6 +519,22 @@ class App(QMainWindow):
         if ok_pressed:
             print(type)
             cur.execute("""INSERT INTO event_type(type) VALUES(?)""", (type,))
+            conn.commit()
+            self.load_data()
+
+    def add_name(self):
+        db_names = ['add_btn_2_4', 'add_btn_3_4']
+        if self.sender().objectName() in db_names:
+            text = 'Введите вид работы:'
+        else:
+            text = 'Введите название помещения:'
+        name, ok_pressed = QInputDialog.getText(self, text, '', )
+        if ok_pressed:
+            print(name, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            if self.sender().objectName() in db_names:
+                cur.execute("""INSERT INTO work_type(name) VALUES(?)""", (name,))
+            else:
+                cur.execute("""INSERT INTO room(name) VALUES(?)""", (name,))
             conn.commit()
             self.load_data()
 
@@ -546,40 +595,42 @@ class App(QMainWindow):
             # заявки
             result = cur.execute("""SELECT id, event_id, room_id, date_start, date_end, description, status_id, 
                                                         work_type_id FROM work_order""").fetchall()
-            print(result[0])
-            self.order_2.setColumnCount(len(result[0]))
-            self.order_2.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
-                                                    'description', 'status_id', 'work_type_id'])
-            self.order_3.setColumnCount(len(result[0]))
-            self.order_3.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
-                                                    'description', 'status_id', 'work_type_id'])
-            self.order_2.setRowCount(0)
-            self.order_3.setRowCount(0)
-            for i, row in enumerate(result):
-                self.order_2.setRowCount(self.order_2.rowCount() + 1)
-                self.order_3.setRowCount(self.order_3.rowCount() + 1)
-                colors = {1: (255, 255, 255), 2: (255, 192, 203), 3: (128, 128, 128)}
-                color = colors[row[6]]
-                for j, elem in enumerate(row):
-                    self.order_2.setItem(i, j, QTableWidgetItem(str(elem)))
-                    self.order_2.item(i, j).setBackground(QColor(color[0], color[1], color[2]))
-                    self.order_3.setItem(i, j, QTableWidgetItem(str(elem)))
-                    self.order_3.item(i, j).setBackground(QColor(color[0], color[1], color[2]))
+            if len(result) != 0:
+                self.order_2.setColumnCount(len(result[0]))
+                self.order_2.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
+                                                        'description', 'status_id', 'work_type_id'])
+                self.order_3.setColumnCount(len(result[0]))
+                self.order_3.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
+                                                        'description', 'status_id', 'work_type_id'])
+                self.order_2.setRowCount(0)
+                self.order_3.setRowCount(0)
+                for i, row in enumerate(result):
+                    self.order_2.setRowCount(self.order_2.rowCount() + 1)
+                    self.order_3.setRowCount(self.order_3.rowCount() + 1)
+                    colors = {1: (255, 255, 255), 2: (255, 192, 203), 3: (128, 128, 128)}
+                    color = colors[row[6]]
+                    for j, elem in enumerate(row):
+                        self.order_2.setItem(i, j, QTableWidgetItem(str(elem)))
+                        self.order_2.item(i, j).setBackground(QColor(color[0], color[1], color[2]))
+                        self.order_3.setItem(i, j, QTableWidgetItem(str(elem)))
+                        self.order_3.item(i, j).setBackground(QColor(color[0], color[1], color[2]))
 
-            self.order_2.resizeColumnsToContents()
-            self.order_3.resizeColumnsToContents()
+                self.order_2.resizeColumnsToContents()
+                self.order_3.resizeColumnsToContents()
 
             combo_list = cur.execute("SELECT name FROM work_type").fetchall()
+            self.combo_2_6.clear()
+            self.combo_3_6.clear()
             for i in combo_list:
                 self.combo_2_6.addItem(i[0])
                 self.combo_3_6.addItem(i[0])
 
-            self.desktop_2.setColumnCount(7)
+            self.desktop_2.setColumnCount(6)
             self.desktop_2.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
-                                                      'description', 'work_type_id'])
-            self.desktop_3.setColumnCount(7)
+                                                      'description'])
+            self.desktop_3.setColumnCount(6)
             self.desktop_3.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
-                                                      'description', 'work_type_id'])
+                                                      'description'])
 
             self.load_desktop()
 
@@ -587,36 +638,38 @@ class App(QMainWindow):
             print(e)
 
     def load_desktop(self):
+        try:
+            # рабочий стол
+            result = cur.execute("""SELECT id, event_id, room_id, date_start, date_end, description, work_type_id
+                                    FROM work_order WHERE status_id = 2""").fetchall()
+            print(result, 'desktop')
+            self.desktop_2.setRowCount(0)
+            self.desktop_3.setRowCount(0)
+            if len(result) != 0:
+                id2 = cur.execute("""SELECT id FROM work_type WHERE name = ?""",
+                                  (self.combo_2_6.currentText(), )).fetchone()[0]
+                id3 = cur.execute("""SELECT id FROM work_type WHERE name = ?""",
+                                  (self.combo_3_6.currentText(), )).fetchone()[0]
 
-        # рабочий стол
-        result = cur.execute("""SELECT id, event_id, room_id, date_start, date_end, description, work_type_id
-                                FROM work_order WHERE status_id = 2""").fetchall()
-        print('desktop', result)
-        print(result[0])
-        id2 = cur.execute("""SELECT id FROM work_type WHERE name = ?""", (self.combo_2_6.currentText(), )).fetchone()[0]
-        id3 = cur.execute("""SELECT id FROM work_type WHERE name = ?""", (self.combo_3_6.currentText(), )).fetchone()[0]
-        print('id', id2, id3)
+                for i, row in enumerate([elem[:-1] for elem in result if elem[6] == id2]):
 
-        self.desktop_2.setRowCount(0)
-        for i, row in enumerate(result):
-            print(row)
-            if row[6] == id2:
-                print('yes')
-                self.desktop_2.setRowCount(self.desktop_2.rowCount() + 1)
-                for j, elem in enumerate(row):
-                    print(j, elem)
-                    self.desktop_2.setItem(i, j, QTableWidgetItem(str(elem)))
+                    print(row)
+                    self.desktop_2.setRowCount(self.desktop_2.rowCount() + 1)
+                    for j, elem in enumerate(row):
+                        self.desktop_2.setItem(i, j, QTableWidgetItem(str(elem)))
+                        print(i, j, elem, 'yes')
 
-        self.desktop_3.setRowCount(0)
-        for i, row in enumerate(result):
-            if row[6] == id3:
-                self.desktop_3.setRowCount(self.desktop_3.rowCount() + 1)
-                for j, elem in enumerate(row):
-                    self.desktop_3.setItem(i, j, QTableWidgetItem(str(elem)))
+                for i, row in enumerate([elem[:-1] for elem in result if elem[6] == id3]):
+                    self.desktop_3.setRowCount(self.desktop_3.rowCount() + 1)
+                    for j, elem in enumerate(row):
+                        self.desktop_3.setItem(i, j, QTableWidgetItem(str(elem)))
 
-        self.desktop_2.resizeColumnsToContents()
-        self.desktop_3.resizeColumnsToContents()
+                self.desktop_2.resizeColumnsToContents()
+                self.desktop_3.resizeColumnsToContents()
+        except Exception as e:
+            print(e)
     def del_row(self):
+
         f = True
         btn = {'del_btn_2_1': self.tableView_3, 'del_btn_3_1': self.tableView_4,
                'del_btn_2_2': self.tableView, 'del_btn_3_2': self.tableView_2}
@@ -624,14 +677,14 @@ class App(QMainWindow):
         row = -1
         for index in sorted(table.selectionModel().selectedRows()):
             row = index.row()
-            print('row', row)
-        print(row, table.objectName())
+            # print('row', row)
+        # print(row, table.objectName())
         data = []
         if row == -1:
             return None
         for col in range(table.model().columnCount()):
             data.append(table.model().data(table.model().index(row, col)))
-        print(data, self.sender().objectName())
+        # print(data, self.sender().objectName())
 
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
@@ -652,7 +705,7 @@ class App(QMainWindow):
         else:
 
             not_del = conn.execute("""SELECT id FROM event WHERE type = ?""", (data[0],)).fetchall()
-            print(not_del)
+            # print(not_del)
             if len(not_del) == 0:
                 f = True
 
@@ -661,9 +714,11 @@ class App(QMainWindow):
                 f = False
 
                 msg.setText(f'''Нельзя удалить данные\ntype: {data[1]}''')
+                msg.setStandardButtons(QMessageBox.Cancel)
 
         msg.setWindowTitle("Удалить данные")
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        if f:
+            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         retval = msg.exec_()
 
         if msg.clickedButton().text() == 'OK':
@@ -671,10 +726,113 @@ class App(QMainWindow):
             if len(data) == 4:
                 cur.execute("""DELETE FROM event WHERE id = ?""", (data[0],))
             elif f:
-
                 cur.execute("""DELETE FROM event_type WHERE id = ?""", (data[0],))
             conn.commit()
             self.load_data()
+    def del_row_name(self):
+        f = True
+        btn = {'del_btn_2_4': self.work_type_2, 'del_btn_2_5': self.room_2,
+               'del_btn_3_4': self.work_type_3, 'del_btn_3_5': self.room_3,
+               'del_btn_1_1': self.room_1}
+        db_names = ['del_btn_2_4', 'del_btn_3_4']
+        table = btn[self.sender().objectName()]
+        row = -1
+        for index in sorted(table.selectionModel().selectedRows()):
+            row = index.row()
+        #     print('row', row)
+        # print(row, table.objectName())
+        data = []
+        if row == -1:
+            return None
+        for col in range(table.model().columnCount()):
+            data.append(table.model().data(table.model().index(row, col)))
+        # print(data, self.sender().objectName())
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.resize(100, 100)
+
+        if self.sender().objectName() in db_names[0]:
+            not_del = conn.execute("""SELECT id FROM work_order WHERE work_type_id = ?""", (data[0], )).fetchall()
+        else:
+            not_del = conn.execute("""SELECT id FROM work_order WHERE room_id = ?""", (data[0],)).fetchall()
+        # print(not_del)
+        if len(not_del) == 0:
+            f = True
+
+            msg.setText(f'''Вы дейсвительно хотите удалить данные?\nname: {data[1]}''')
+        else:
+            f = False
+
+            msg.setText(f'''Нельзя удалить данные\nname: {data[1]}''')
+            msg.setStandardButtons(QMessageBox.Cancel)
+
+        msg.setWindowTitle("Удалить данные")
+        if f:
+            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        retval = msg.exec_()
+
+        if msg.clickedButton().text() == 'OK':
+            if self.sender().objectName() in db_names[0]:
+                cur.execute("""DELETE FROM work_type WHERE id = ?""", (data[0], ))
+            else:
+                cur.execute("""DELETE FROM room WHERE id = ?""", (data[0],))
+            conn.commit()
+            self.load_data()
+
+    def del_order(self):
+        btn = {'del_btn_2_3': self.order_2, 'del_btn_3_3': self.order_3}
+        table = btn[self.sender().objectName()]
+        row = -1
+        for index in sorted(table.selectionModel().selectedRows()):
+            row = index.row()
+            # print('row', row)
+        # print(row, table.objectName())
+        data = []
+        if row == -1:
+            return None
+        for col in range(table.model().columnCount()):
+            data.append(table.model().data(table.model().index(row, col)))
+        # print(data, self.sender().objectName())
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.resize(150, 100)
+
+
+        type = 'Null'
+        try:
+            room = cur.execute("""SELECT name FROM room WHERE id = ?""", (data[2],)).fetchone()[0]
+            room = f'{room}({data[2]})'
+            print(data[7])
+            work_type = cur.execute("""SELECT name FROM work_type WHERE id = ?""", (data[7],)).fetchone()[0]
+            work_type = f'{work_type}({data[7]})'
+            status = cur.execute("""SELECT name FROM status WHERE id = ?""", (data[6],)).fetchone()[0]
+            status = f'{status}({data[6]})'
+        except Exception as e:
+            print(e)
+
+        msg.setText(
+            f'''Вы дейсвительно хотите удалить данные?
+id мероприятия: {data[1]}
+комната: {room}
+начало: {data[3]}
+конец: {data[4]}
+описание: {data[5]}
+статус: {status}
+вид работы: {work_type}''')
+
+        msg.setWindowTitle("Удалить данные")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        retval = msg.exec_()
+
+        if msg.clickedButton().text() == 'OK':
+            try:
+                cur.execute("""DELETE FROM work_order WHERE id = ?""", (data[0],))
+                conn.commit()
+                self.load_data()
+            except Exception as e:
+                print(e)
 
     def open_second_form(self):
         self.second_form = SecondForm(self)

@@ -30,7 +30,7 @@
         <enum>QTabWidget::North</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <property name="tabBarAutoHide">
         <bool>false</bool>
@@ -364,39 +364,6 @@
             </rect>
            </property>
           </widget>
-          <widget class="QWidget" name="horizontalLayoutWidget_11">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>340</y>
-             <width>239</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
-            <item>
-             <widget class="QPushButton" name="add_btn_2_6">
-              <property name="text">
-               <string>Добавить</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="del_btn_2_6">
-              <property name="text">
-               <string>Удалить</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="change_btn_2_6">
-              <property name="text">
-               <string>Изменить</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </widget>
        </widget>
@@ -610,7 +577,7 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-20</y>
              <width>681</width>
              <height>192</height>
             </rect>
@@ -667,39 +634,6 @@
             </rect>
            </property>
           </widget>
-          <widget class="QWidget" name="horizontalLayoutWidget_12">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>330</y>
-             <width>239</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <item>
-             <widget class="QPushButton" name="add_btn_3_6">
-              <property name="text">
-               <string>Добавить</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="del_btn_3_6">
-              <property name="text">
-               <string>Удалить</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="change_btn_3_6">
-              <property name="text">
-               <string>Изменить</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </widget>
        </widget>
@@ -737,8 +671,8 @@
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup2_2"/>
-  <buttongroup name="buttonGroup3_2"/>
   <buttongroup name="buttonGroup2_1"/>
   <buttongroup name="buttonGroup3_1"/>
+  <buttongroup name="buttonGroup3_2"/>
  </buttongroups>
 </ui>
