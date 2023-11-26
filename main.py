@@ -445,10 +445,15 @@ add_ui_templ = """<?xml version="1.0" encoding="UTF-8"?>
  <connections/>
 </ui>
 """
+
+
 class App(QMainWindow):
     def __init__(self):
         super().__init__()
         f = io.StringIO(ui_templ)
+        self.titles = ['id', 'event_id', 'room_id', 'date_start', 'date_end',
+                       'description', 'status_id', 'work_type_id']
+        self.modified = []
         uic.loadUi('ui.ui', self)
         self.initUi()
 
@@ -484,7 +489,6 @@ class App(QMainWindow):
         self.order_3.setSelectionMode(QAbstractItemView.SingleSelection)
         self.order_3.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-
         self.load_data()
         self.add_btn_2_2.clicked.connect(self.add_type)
         self.add_btn_3_2.clicked.connect(self.add_type)
@@ -513,6 +517,10 @@ class App(QMainWindow):
 
         self.add_btn_2_3.clicked.connect(self.add_order)
         self.add_btn_3_3.clicked.connect(self.add_order)
+        self.order_2.itemChanged.connect(self.item_changed)
+        self.order_3.itemChanged.connect(self.item_changed)
+        self.change_btn_2_3.clicked.connect(self.save_results)
+        self.change_btn_3_3.clicked.connect(self.save_results)
 
         self.combo_2_6.currentTextChanged.connect(self.load_desktop)
         self.combo_3_6.currentTextChanged.connect(self.load_desktop)
@@ -600,11 +608,9 @@ class App(QMainWindow):
                                                         work_type_id FROM work_order""").fetchall()
             if len(result) != 0:
                 self.order_2.setColumnCount(len(result[0]))
-                self.order_2.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
-                                                        'description', 'status_id', 'work_type_id'])
+                self.order_2.setHorizontalHeaderLabels(self.titles)
                 self.order_3.setColumnCount(len(result[0]))
-                self.order_3.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
-                                                        'description', 'status_id', 'work_type_id'])
+                self.order_3.setHorizontalHeaderLabels(self.titles)
                 self.order_2.setRowCount(0)
                 self.order_3.setRowCount(0)
                 for i, row in enumerate(result):
@@ -650,9 +656,9 @@ class App(QMainWindow):
             self.desktop_3.setRowCount(0)
             if len(result) != 0:
                 id2 = cur.execute("""SELECT id FROM work_type WHERE name = ?""",
-                                  (self.combo_2_6.currentText(), )).fetchone()[0]
+                                  (self.combo_2_6.currentText(),)).fetchone()[0]
                 id3 = cur.execute("""SELECT id FROM work_type WHERE name = ?""",
-                                  (self.combo_3_6.currentText(), )).fetchone()[0]
+                                  (self.combo_3_6.currentText(),)).fetchone()[0]
 
                 for i, row in enumerate([elem[:-1] for elem in result if elem[6] == id2]):
 
@@ -671,6 +677,7 @@ class App(QMainWindow):
                 self.desktop_3.resizeColumnsToContents()
         except Exception as e:
             print(e)
+
     def del_row(self):
 
         f = True
@@ -732,6 +739,7 @@ class App(QMainWindow):
                 cur.execute("""DELETE FROM event_type WHERE id = ?""", (data[0],))
             conn.commit()
             self.load_data()
+
     def del_row_name(self):
         f = True
         btn = {'del_btn_2_4': self.work_type_2, 'del_btn_2_5': self.room_2,
@@ -756,7 +764,7 @@ class App(QMainWindow):
         msg.resize(100, 100)
 
         if self.sender().objectName() in db_names[0]:
-            not_del = conn.execute("""SELECT id FROM work_order WHERE work_type_id = ?""", (data[0], )).fetchall()
+            not_del = conn.execute("""SELECT id FROM work_order WHERE work_type_id = ?""", (data[0],)).fetchall()
         else:
             not_del = conn.execute("""SELECT id FROM work_order WHERE room_id = ?""", (data[0],)).fetchall()
         # print(not_del)
@@ -777,7 +785,7 @@ class App(QMainWindow):
 
         if msg.clickedButton().text() == 'OK':
             if self.sender().objectName() in db_names[0]:
-                cur.execute("""DELETE FROM work_type WHERE id = ?""", (data[0], ))
+                cur.execute("""DELETE FROM work_type WHERE id = ?""", (data[0],))
             else:
                 cur.execute("""DELETE FROM room WHERE id = ?""", (data[0],))
             conn.commit()
@@ -801,7 +809,6 @@ class App(QMainWindow):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.resize(150, 100)
-
 
         type = 'Null'
         try:
@@ -836,6 +843,29 @@ id мероприятия: {data[1]}
                 self.load_data()
             except Exception as e:
                 print(e)
+
+    def item_changed(self, item):
+
+        self.modified.append((self.titles[item.column()], item.text(), int(self.order_2.item(item.row(), 0).text())))
+        print(self.modified)
+
+    def save_results(self):
+        try:
+            for i in self.modified:
+                que = "UPDATE work_order SET\n"
+                print(i)
+                if i[0] not in ['description', 'date_start', 'date_end']:
+                    que += f"{i[0]} = {int(i[1])}"
+                else:
+                    que += f"{i[0]} = '{i[1]}'"
+                que += f" WHERE id = {i[2]}"
+                print(que)
+                cur.execute(que)
+            conn.commit()
+            self.modified.clear()
+            self.load_data()
+        except Exception as e:
+            print(e)
 
     def add_order(self):
         self.order_form = OrderForm(self)
@@ -880,6 +910,7 @@ class SecondForm(QMainWindow):
     def cancel(self):
         self.close()
 
+
 class OrderForm(QMainWindow):
     def __init__(self, main):
         self.main = main
@@ -913,6 +944,7 @@ class OrderForm(QMainWindow):
             self.cancel_btn.clicked.connect(self.cancel)
         except Exception as e:
             print(e)
+
     def add(self):
         try:
             start = self.date_start.date().toString('dd.MM.yyyy')
@@ -934,6 +966,7 @@ class OrderForm(QMainWindow):
             self.close()
         except Exception as e:
             print(e)
+
     def cancel(self):
         self.close()
 
