@@ -511,6 +511,9 @@ class App(QMainWindow):
         self.del_btn_2_3.clicked.connect(self.del_order)
         self.del_btn_3_3.clicked.connect(self.del_order)
 
+        self.add_btn_2_3.clicked.connect(self.add_order)
+        self.add_btn_3_3.clicked.connect(self.add_order)
+
         self.combo_2_6.currentTextChanged.connect(self.load_desktop)
         self.combo_3_6.currentTextChanged.connect(self.load_desktop)
 
@@ -834,6 +837,10 @@ id мероприятия: {data[1]}
             except Exception as e:
                 print(e)
 
+    def add_order(self):
+        self.order_form = OrderForm(self)
+        self.order_form.show()
+
     def open_second_form(self):
         self.second_form = SecondForm(self)
         self.second_form.show()
@@ -870,6 +877,63 @@ class SecondForm(QMainWindow):
         self.main.load_data()
         self.close()
 
+    def cancel(self):
+        self.close()
+
+class OrderForm(QMainWindow):
+    def __init__(self, main):
+        self.main = main
+        super().__init__()
+        # f1 = io.StringIO(add_ui_templ)
+        uic.loadUi('add_order.ui', self)
+        self.initUi()
+
+    def initUi(self):
+        try:
+            self.setFixedSize(540, 420)
+            event_id_list = cur.execute("""SELECT id FROM event""").fetchall()
+            room_list = cur.execute("""SELECT id, name FROM room""").fetchall()
+            status_list = cur.execute("""SELECT id, name FROM status""").fetchall()
+            work_type_list = cur.execute("""SELECT id, name FROM work_type""").fetchall()
+
+            self.event_id_combo.clear()
+            for i in event_id_list:
+                self.event_id_combo.addItem(str(i[0]))
+            self.room_id_combo.clear()
+            for i in room_list:
+                self.room_id_combo.addItem(f'{i[1]}({i[0]})')
+            self.status_combo.clear()
+            for i in status_list:
+                self.status_combo.addItem(f'{i[1]}({i[0]})')
+            self.work_type_combo.clear()
+            for i in work_type_list:
+                self.work_type_combo.addItem(f'{i[1]}({i[0]})')
+
+            self.ok_btn.clicked.connect(self.add)
+            self.cancel_btn.clicked.connect(self.cancel)
+        except Exception as e:
+            print(e)
+    def add(self):
+        try:
+            start = self.date_start.date().toString('dd.MM.yyyy')
+            end = self.date_end.date().toString('dd.MM.yyyy')
+            event_id = int(self.event_id_combo.currentText())
+            room_id = self.room_id_combo.currentText()
+            room_id = int(room_id[room_id.find('(') + 1:-1])
+            work_type_id = self.work_type_combo.currentText()
+            work_type_id = int(work_type_id[work_type_id.find('(') + 1:-1])
+            status_id = self.status_combo.currentText()
+            status_id = int(status_id[status_id.find('(') + 1:-1])
+            description = self.description_text.toPlainText()
+            cur.execute("""INSERT INTO work_order(event_id, room_id, date_start, date_end, description, 
+                            status_id, work_type_id) VALUES(?, ?, ?, ?, ?, ?, ?)""",
+                        (event_id, room_id, start, end, description, status_id, work_type_id))
+
+            conn.commit()
+            self.main.load_data()
+            self.close()
+        except Exception as e:
+            print(e)
     def cancel(self):
         self.close()
 
