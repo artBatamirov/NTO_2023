@@ -19,7 +19,7 @@
      <rect>
       <x>30</x>
       <y>30</y>
-      <width>701</width>
+      <width>741</width>
       <height>481</height>
      </rect>
     </property>
@@ -44,7 +44,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>691</width>
+           <width>741</width>
            <height>451</height>
           </rect>
          </property>
@@ -103,12 +103,12 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>691</width>
+           <width>731</width>
            <height>451</height>
           </rect>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab2_1">
           <attribute name="title">
@@ -152,6 +152,13 @@
               <attribute name="buttonGroup">
                <string notr="true">buttonGroup2_1</string>
               </attribute>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="book_btn_2_1">
+              <property name="text">
+               <string>Забронировать</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -378,6 +385,54 @@
            </property>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab2_7">
+          <attribute name="title">
+           <string>Бронирование</string>
+          </attribute>
+          <widget class="QTableWidget" name="book_2_7">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>701</width>
+             <height>201</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_11">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>310</y>
+             <width>239</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QPushButton" name="add_btn_2_7">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="change_btn_2_7">
+              <property name="text">
+               <string>Изменить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_2_7">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab3">
@@ -389,12 +444,12 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>691</width>
+           <width>741</width>
            <height>451</height>
           </rect>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab3_1">
           <attribute name="title">
@@ -438,6 +493,13 @@
               <attribute name="buttonGroup">
                <string notr="true">buttonGroup3_1</string>
               </attribute>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="book_btn_3_1">
+              <property name="text">
+               <string>Забронировать</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -661,6 +723,54 @@
            </property>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab3_7">
+          <attribute name="title">
+           <string>Бронирование</string>
+          </attribute>
+          <widget class="QTableWidget" name="book_3_7">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>701</width>
+             <height>201</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_12">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>310</y>
+             <width>239</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QPushButton" name="add_btn_3_7">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="change_btn_3_7">
+              <property name="text">
+               <string>Изменить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_3_7">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </widget>
        </widget>
       </widget>
@@ -696,9 +806,9 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup2_1"/>
   <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup3_2"/>
   <buttongroup name="buttonGroup3_1"/>
+  <buttongroup name="buttonGroup2_1"/>
  </buttongroups>
 </ui>

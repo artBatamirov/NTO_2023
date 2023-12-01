@@ -489,6 +489,11 @@ class App(QMainWindow):
         self.order_3.setSelectionMode(QAbstractItemView.SingleSelection)
         self.order_3.setSelectionBehavior(QAbstractItemView.SelectRows)
 
+        self.book_2_7.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.book_2_7.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.book_3_7.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.book_3_7.setSelectionBehavior(QAbstractItemView.SelectRows)
+
         self.load_data()
         self.add_btn_2_2.clicked.connect(self.add_type)
         self.add_btn_3_2.clicked.connect(self.add_type)
@@ -521,6 +526,12 @@ class App(QMainWindow):
         self.order_3.itemChanged.connect(self.item_changed)
         self.change_btn_2_3.clicked.connect(self.save_results)
         self.change_btn_3_3.clicked.connect(self.save_results)
+
+        self.del_btn_2_7.clicked.connect(self.del_booking)
+        self.del_btn_3_7.clicked.connect(self.del_booking)
+
+        self.add_btn_2_7.clicked.connect(self.open_book_form)
+        self.add_btn_3_7.clicked.connect(self.open_book_form)
 
         self.combo_2_6.currentTextChanged.connect(self.load_desktop)
         self.combo_3_6.currentTextChanged.connect(self.load_desktop)
@@ -642,6 +653,8 @@ class App(QMainWindow):
                                                       'description'])
 
             self.load_desktop()
+            self.load_book()
+
 
         except Exception as e:
             print(e)
@@ -677,6 +690,59 @@ class App(QMainWindow):
                 self.desktop_3.resizeColumnsToContents()
         except Exception as e:
             print(e)
+
+    def load_book(self):
+        result = cur.execute("""SELECT b.id, event_id, date, date_start, time_start, date_end, time_end, r.name, comment 
+FROM 
+booking b
+INNER JOIN 
+room r
+ON b.room_id = r.id""").fetchall()
+        print(result)
+        if len(result) != 0:
+            self.book_2_7.setColumnCount(len(result[0]))
+            self.book_2_7.setHorizontalHeaderLabels(['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
+            self.book_3_7.setColumnCount(len(result[0]))
+            self.book_3_7.setHorizontalHeaderLabels(['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
+            self.book_2_7.setRowCount(0)
+            self.book_3_7.setRowCount(0)
+            for i, row in enumerate(result):
+                self.book_2_7.setRowCount(self.book_2_7.rowCount() + 1)
+                self.book_3_7.setRowCount(self.book_3_7.rowCount() + 1)
+                for j, elem in enumerate(row):
+                    self.book_2_7.setItem(i, j, QTableWidgetItem(str(elem)))
+                    self.book_3_7.setItem(i, j, QTableWidgetItem(str(elem)))
+
+            self.book_2_7.resizeColumnsToContents()
+            self.book_3_7.resizeColumnsToContents()
+
+    def del_booking(self):
+
+        btn = {'del_btn_2_7': self.book_2_7, 'del_btn_3_7': self.book_3_7}
+        table = btn[self.sender().objectName()]
+        row = -1
+        for index in sorted(table.selectionModel().selectedRows()):
+            row = index.row()
+        data = []
+
+        if row == -1:
+            return None
+        for col in range(table.model().columnCount()):
+            data.append(table.model().data(table.model().index(row, col)))
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.resize(100, 100)
+        msg.setText(
+            f'''Вы дейсвительно хотите удалить данные?\nid: {data[0]}
+date: {data[1]}\nevent: {data[2]}\ndata_start: {data[3]}\ntime_start: {data[4]}
+data_end: {data[5]}\ntime_end: {data[6]}\nroom: {data[7]}\ncomment: {data[8]}''')
+        msg.setWindowTitle("Удалить данные")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        retval = msg.exec_()
+        if msg.clickedButton().text() == 'OK':
+            cur.execute("""DELETE FROM booking WHERE id = ?""", (data[0],))
+            conn.commit()
+            self.load_data()
 
     def del_row(self):
 
@@ -875,6 +941,10 @@ id мероприятия: {data[1]}
         self.second_form = SecondForm(self)
         self.second_form.show()
 
+    def open_book_form(self):
+        self.book_form = BookForm(self)
+        self.book_form.show()
+
 
 class SecondForm(QMainWindow):
     def __init__(self, main):
@@ -966,6 +1036,66 @@ class OrderForm(QMainWindow):
             self.close()
         except Exception as e:
             print(e)
+
+    def cancel(self):
+        self.close()
+
+class BookForm(QMainWindow):
+    def __init__(self, main):
+        self.main = main
+        super().__init__()
+        # f1 = io.StringIO(add_ui_templ)
+        uic.loadUi('book.ui', self)
+        self.initUi()
+
+    def initUi(self):
+        # try:
+        self.setFixedSize(540, 420)
+        #     # event_id_list = cur.execute("""SELECT id FROM event""").fetchall()
+        #     # room_list = cur.execute("""SELECT id, name FROM room""").fetchall()
+        #     # status_list = cur.execute("""SELECT id, name FROM status""").fetchall()
+        #     # work_type_list = cur.execute("""SELECT id, name FROM work_type""").fetchall()
+        #     #
+        #     # self.event_id_combo.clear()
+        #     # for i in event_id_list:
+        #     #     self.event_id_combo.addItem(str(i[0]))
+        #     # self.room_id_combo.clear()
+        #     # for i in room_list:
+        #     #     self.room_id_combo.addItem(f'{i[1]}({i[0]})')
+        #     # self.status_combo.clear()
+        #     # for i in status_list:
+        #     #     self.status_combo.addItem(f'{i[1]}({i[0]})')
+        #     # self.work_type_combo.clear()
+        #     # for i in work_type_list:
+        #     #     self.work_type_combo.addItem(f'{i[1]}({i[0]})')
+        #     #
+        #     # self.ok_btn.clicked.connect(self.add)
+        #     # self.cancel_btn.clicked.connect(self.cancel)
+        # except Exception as e:
+        #     print(e)
+
+    def add(self):
+        pass
+        # try:
+        #     # start = self.date_start.date().toString('dd.MM.yyyy')
+        #     # end = self.date_end.date().toString('dd.MM.yyyy')
+        #     # event_id = int(self.event_id_combo.currentText())
+        #     # room_id = self.room_id_combo.currentText()
+        #     # room_id = int(room_id[room_id.find('(') + 1:-1])
+        #     # work_type_id = self.work_type_combo.currentText()
+        #     # work_type_id = int(work_type_id[work_type_id.find('(') + 1:-1])
+        #     # status_id = self.status_combo.currentText()
+        #     # status_id = int(status_id[status_id.find('(') + 1:-1])
+        #     # description = self.description_text.toPlainText()
+        #     # cur.execute("""INSERT INTO work_order(event_id, room_id, date_start, date_end, description,
+        #     #                 status_id, work_type_id) VALUES(?, ?, ?, ?, ?, ?, ?)""",
+        #     #             (event_id, room_id, start, end, description, status_id, work_type_id))
+        #     #
+        #     # conn.commit()
+        #     # self.main.load_data()
+        #     # self.close()
+        # except Exception as e:
+        #     print(e)
 
     def cancel(self):
         self.close()
