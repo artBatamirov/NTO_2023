@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>545</width>
-    <height>358</height>
+    <width>543</width>
+    <height>272</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,36 +39,25 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>50</y>
-     <width>311</width>
-     <height>151</height>
+     <x>33</x>
+     <y>75</y>
+     <width>281</width>
+     <height>121</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="sizeConstraint">
-     <enum>QLayout::SetNoConstraint</enum>
+     <enum>QLayout::SetFixedSize</enum>
     </property>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>id мероприятия:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QDateTimeEdit" name="dateTimeEdit"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QComboBox" name="event_id_combo"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Начало:</string>
-      </property>
-     </widget>
-    </item>
+    <property name="leftMargin">
+     <number>20</number>
+    </property>
+    <property name="topMargin">
+     <number>30</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
     <item row="2" column="1">
      <widget class="QLabel" name="label_3">
       <property name="text">
@@ -76,8 +65,22 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QDateTimeEdit" name="dateTimeEdit_2"/>
+    <item row="1" column="0">
+     <widget class="QComboBox" name="event_id_combo"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>id мероприятия:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Начало:</string>
+      </property>
+     </widget>
     </item>
     <item row="0" column="1">
      <widget class="QLabel" name="label_6">
@@ -89,36 +92,39 @@
     <item row="1" column="1">
      <widget class="QComboBox" name="room_combo"/>
     </item>
+    <item row="3" column="0">
+     <widget class="QDateTimeEdit" name="start_edit"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QDateTimeEdit" name="end_edit"/>
+    </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget">
+  <widget class="QPushButton" name="ok_btn">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>260</y>
-     <width>461</width>
-     <height>80</height>
+     <x>40</x>
+     <y>230</y>
+     <width>87</width>
+     <height>23</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetNoConstraint</enum>
-    </property>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Ok</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="text">
-       <string>Cancel</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <property name="text">
+    <string>Ok</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="cancel_btn">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>230</y>
+     <width>179</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
   </widget>
  </widget>
  <resources/>

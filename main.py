@@ -1,12 +1,13 @@
 import sys
 import io
 import sqlite3
-from PyQt5 import uic
+from PyQt5 import uic, QtCore
 from PyQt5.QtGui import QColor
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDateTime
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QMessageBox, QInputDialog, QWidget, \
     QAbstractItemView, QTableWidgetItem
+import datetime
 
 conn = sqlite3.connect("culture_centr.db")
 cur = conn.cursor()
@@ -536,6 +537,9 @@ class App(QMainWindow):
         self.combo_2_6.currentTextChanged.connect(self.load_desktop)
         self.combo_3_6.currentTextChanged.connect(self.load_desktop)
 
+        self.change_btn_2_7.clicked.connect(self.change_book_form)
+        self.change_btn_3_7.clicked.connect(self.change_book_form)
+
     def add_type(self):
         type, ok_pressed = QInputDialog.getText(self, 'Введите тип мероприятия', '', )
         if ok_pressed:
@@ -945,6 +949,21 @@ id мероприятия: {data[1]}
         self.book_form = BookForm(self)
         self.book_form.show()
 
+    def change_book_form(self):
+        btn = {'change_btn_2_7': self.book_2_7, 'change_btn_3_7': self.book_3_7}
+        table = btn[self.sender().objectName()]
+        row = -1
+        for index in sorted(table.selectionModel().selectedRows()):
+            row = index.row()
+
+        data = []
+        if row == -1:
+            return None
+        for col in range(table.model().columnCount()):
+            data.append(table.model().data(table.model().index(row, col)))
+        self.book_form = BookForm(self, data)
+        self.book_form.show()
+
 
 class SecondForm(QMainWindow):
     def __init__(self, main):
@@ -1041,61 +1060,64 @@ class OrderForm(QMainWindow):
         self.close()
 
 class BookForm(QMainWindow):
-    def __init__(self, main):
+    def __init__(self, main, data=[]):
         self.main = main
+        self.data = data
         super().__init__()
-        # f1 = io.StringIO(add_ui_templ)
         uic.loadUi('book.ui', self)
         self.initUi()
 
     def initUi(self):
-        # try:
-        self.setFixedSize(540, 420)
-        #     # event_id_list = cur.execute("""SELECT id FROM event""").fetchall()
-        #     # room_list = cur.execute("""SELECT id, name FROM room""").fetchall()
-        #     # status_list = cur.execute("""SELECT id, name FROM status""").fetchall()
-        #     # work_type_list = cur.execute("""SELECT id, name FROM work_type""").fetchall()
-        #     #
-        #     # self.event_id_combo.clear()
-        #     # for i in event_id_list:
-        #     #     self.event_id_combo.addItem(str(i[0]))
-        #     # self.room_id_combo.clear()
-        #     # for i in room_list:
-        #     #     self.room_id_combo.addItem(f'{i[1]}({i[0]})')
-        #     # self.status_combo.clear()
-        #     # for i in status_list:
-        #     #     self.status_combo.addItem(f'{i[1]}({i[0]})')
-        #     # self.work_type_combo.clear()
-        #     # for i in work_type_list:
-        #     #     self.work_type_combo.addItem(f'{i[1]}({i[0]})')
-        #     #
-        #     # self.ok_btn.clicked.connect(self.add)
-        #     # self.cancel_btn.clicked.connect(self.cancel)
-        # except Exception as e:
-        #     print(e)
+        try:
+            self.setFixedSize(540, 420)
+            event_id_list = cur.execute("""SELECT id FROM event""").fetchall()
+            room_list = cur.execute("""SELECT id, name FROM room WHERE id not in 
+                                        (SELECT room_id FROM booking)""").fetchall()
+            print(room_list, self.data)
+
+            self.event_id_combo.clear()
+            for i in event_id_list:
+                self.event_id_combo.addItem(str(i[0]))
+            self.event_id_combo.setCurrentIndex(2)
+            self.room_combo.clear()
+            for i in room_list:
+                self.room_combo.addItem(f'{i[1]}({i[0]})')
+            if self.data:
+                self.event_id_combo.setCurrentText(self.data[2])
+                room_id = cur.execute("SELECT id FROM room WHERE name = ?", (self.data[7], )).fetchone()[0]
+                room = f'{self.data[7]}({room_id})'
+                self.room_combo.addItem(room)
+                self.room_combo.setCurrentText(room)
+                self.comment_text.appendPlainText(self.data[8])
+                date_start = QtCore.QDate.fromString(self.data[3], "d-MMM-yyyy")
+                self.start_edit.setDate(date_start)
+            self.ok_btn.clicked.connect(self.add)
+            self.cancel_btn.clicked.connect(self.cancel)
+        except Exception as e:
+            print(e)
 
     def add(self):
         pass
-        # try:
-        #     # start = self.date_start.date().toString('dd.MM.yyyy')
-        #     # end = self.date_end.date().toString('dd.MM.yyyy')
-        #     # event_id = int(self.event_id_combo.currentText())
-        #     # room_id = self.room_id_combo.currentText()
-        #     # room_id = int(room_id[room_id.find('(') + 1:-1])
-        #     # work_type_id = self.work_type_combo.currentText()
-        #     # work_type_id = int(work_type_id[work_type_id.find('(') + 1:-1])
-        #     # status_id = self.status_combo.currentText()
-        #     # status_id = int(status_id[status_id.find('(') + 1:-1])
-        #     # description = self.description_text.toPlainText()
-        #     # cur.execute("""INSERT INTO work_order(event_id, room_id, date_start, date_end, description,
-        #     #                 status_id, work_type_id) VALUES(?, ?, ?, ?, ?, ?, ?)""",
-        #     #             (event_id, room_id, start, end, description, status_id, work_type_id))
-        #     #
-        #     # conn.commit()
-        #     # self.main.load_data()
-        #     # self.close()
-        # except Exception as e:
-        #     print(e)
+        try:
+            date = datetime.date.today().strftime('%d.%m.%Y')
+            date_start = self.start_edit.date().toString('dd.MM.yyyy')
+            time_start = self.start_edit.time().toString()
+            date_end = self.end_edit.date().toString('dd.MM.yyyy')
+            time_end = self.end_edit.time().toString()
+            event_id = int(self.event_id_combo.currentText())
+            room_id = self.room_combo.currentText()
+            room_id = int(room_id[room_id.find('(') + 1:-1])
+            comment = self.comment_text.toPlainText()
+            print(date, event_id, date_start,time_start, date_end, time_end, room_id, comment)
+            cur.execute("""INSERT INTO booking(date, event_id, date_start, time_start, date_end, time_end, room_id,
+                        comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?)""",
+                        (date, event_id, date_start,time_start, date_end, time_end, room_id, comment))
+
+            conn.commit()
+            self.main.load_data()
+            self.close()
+        except Exception as e:
+            print(e)
 
     def cancel(self):
         self.close()
