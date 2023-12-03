@@ -26,9 +26,14 @@ def check_date(date1, date2):
     else:
         return True
 
+def convert_to_date(date):
+
+    date = datetime.datetime.strptime(date, "%d.%m.%Y %H:%M:%S")
+    return date
 
 
-check_date('03.12.2023', '08:49:00', '04.12.2023', '15:16:00')
+
+# check_date('03.12.2023', '08:49:00', '04.12.2023', '15:16:00')
 
 
 class App(QMainWindow):
@@ -685,8 +690,9 @@ class BookForm(QMainWindow):
                     self.event_id_combo.addItem(str(i[0]))
                 self.event_id_combo.setCurrentIndex(2)
             self.room_combo.clear()
-            for i in room_list:
-                self.room_combo.addItem(f'{i[1]}({i[0]})')
+            self.room_combo.addItem('не указана дата')
+            # for i in room_list:
+            #     self.room_combo.addItem(f'{i[1]}({i[0]})')
 
             if len(self.data) == 9:
 
@@ -709,9 +715,44 @@ class BookForm(QMainWindow):
             else:
                 self.ok_btn.clicked.connect(self.add)
             self.cancel_btn.clicked.connect(self.cancel)
+            self.reload_btn.clicked.connect(self.load)
         except Exception as e:
             print(e)
 
+    def load(self):
+        try:
+            date_start = self.start_edit.date().toString('dd.MM.yyyy')
+            time_start = self.start_edit.time().toString()
+            date_end = self.end_edit.date().toString('dd.MM.yyyy')
+            time_end = self.end_edit.time().toString()
+            ds1 = convert_to_date(date_start + ' ' + time_start)
+            de1 = convert_to_date(date_end + ' ' + time_end)
+            room_list = cur.execute("""SELECT r.id, name, b.date_start, b.time_start, b.date_end, b.time_end  
+                                        FROM room as r INNER JOIN booking as b ON r.id = b.room_id""").fetchall()
+            r_list = cur.execute("""SELECT id, name FROM room """).fetchall()
+            self.room_combo.clear()
+            if len(room_list + r_list) == 0:
+                self.room_combo.addItem('не указана дата')
+            if ds1 > de1:
+                self.room_combo.addItem('неправильная дата')
+            else:
+                not_corr = []
+                lst = []
+                for i in room_list:
+                    ds2 = convert_to_date(i[2] + ' ' + i[3])
+                    de2 = convert_to_date(i[4] + ' ' + i[5])
+                    if ((ds2 >= ds1 and ds2 <= de1) or (de2 >= ds1 and de2 <= de1) or
+                        (ds1 >= ds2 and ds1 <= de2) or (de1 >= ds2 and de1 <= de2)):
+                        not_corr.append(i[1])
+                        print(ds1, de1, ds2, de2, i, False)
+                print(not_corr)
+                print()
+                for i in room_list + r_list:
+                    if i[1] not in not_corr and i[1] not in lst:
+                        self.room_combo.addItem(f'{i[1]}({i[0]})')
+                        lst.append(i[1])
+        except Exception as e:
+            print(e)
     def add(self):
         try:
             date = datetime.date.today().strftime('%d.%m.%Y')
@@ -719,12 +760,14 @@ class BookForm(QMainWindow):
             time_start = self.start_edit.time().toString()
             date_end = self.end_edit.date().toString('dd.MM.yyyy')
             time_end = self.end_edit.time().toString()
-            check_date(date_start, time_start, date_end, time_end)
+            # date1 = convert_to_date(date_start + ' ' + time_start)
+            # date2 = convert_to_date(date_end + ' ' + time_end)
+
             event_id = int(self.event_id_combo.currentText())
             room_id = self.room_combo.currentText()
             room_id = int(room_id[room_id.find('(') + 1:-1])
             comment = self.comment_text.toPlainText()
-            print(date, event_id, date_start, time_start, date_end, time_end, room_id, comment)
+            # print(date, event_id, date_start, time_start, date_end, time_end, room_id, comment)
             cur.execute("""INSERT INTO booking(date, event_id, date_start, time_start, date_end, time_end, room_id,
                         comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?)""",
                         (date, event_id, date_start, time_start, date_end, time_end, room_id, comment))

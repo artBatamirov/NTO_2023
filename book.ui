@@ -126,6 +126,19 @@
     <string>Cancel</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="reload_btn">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>10</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Загрузить</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
