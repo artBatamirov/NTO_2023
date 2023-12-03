@@ -11,447 +11,29 @@ import datetime
 
 conn = sqlite3.connect("culture_centr.db")
 cur = conn.cursor()
-ui_templ = """<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>800</width>
-    <height>600</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>30</y>
-      <width>701</width>
-      <height>481</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="currentIndex">
-        <number>1</number>
-       </property>
-       <widget class="QWidget" name="tab1">
-        <attribute name="title">
-         <string>Образование</string>
-        </attribute>
-        <widget class="QLabel" name="label">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>20</y>
-           <width>81</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Образование</string>
-         </property>
-        </widget>
-       </widget>
-       <widget class="QWidget" name="tab2">
-        <attribute name="title">
-         <string>Развлечения</string>
-        </attribute>
-        <widget class="QTabWidget" name="tabWidget_2">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>691</width>
-           <height>451</height>
-          </rect>
-         </property>
-         <property name="currentIndex">
-          <number>1</number>
-         </property>
-         <widget class="QWidget" name="tab2_1">
-          <attribute name="title">
-           <string>Мероприятия</string>
-          </attribute>
-          <widget class="QTableView" name="tableView_3">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>681</width>
-             <height>251</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QWidget" name="horizontalLayoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>300</y>
-             <width>295</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QPushButton" name="add_btn_2_1">
-              <property name="text">
-               <string>Добавить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup2_1</string>
-              </attribute>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="del_btn_2_1">
-              <property name="text">
-               <string>Удалить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup2_1</string>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab2_2">
-          <attribute name="title">
-           <string>Виды мероприятий</string>
-          </attribute>
-          <widget class="QTableView" name="tableView">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>681</width>
-             <height>251</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QWidget" name="horizontalLayoutWidget_2">
-           <property name="geometry">
-            <rect>
-             <x>30</x>
-             <y>300</y>
-             <width>295</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QPushButton" name="add_btn_2_2">
-              <property name="text">
-               <string>Добавить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup2_2</string>
-              </attribute>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="del_btn_2_2">
-              <property name="text">
-               <string>Удалить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup2_2</string>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </widget>
-       </widget>
-       <widget class="QWidget" name="tab3">
-        <attribute name="title">
-         <string>Просвещение</string>
-        </attribute>
-        <widget class="QTabWidget" name="tabWidget_3">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>691</width>
-           <height>451</height>
-          </rect>
-         </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <widget class="QWidget" name="tab3_1">
-          <attribute name="title">
-           <string>Мероприятия</string>
-          </attribute>
-          <widget class="QTableView" name="tableView_4">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>681</width>
-             <height>251</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QWidget" name="horizontalLayoutWidget_3">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>290</y>
-             <width>302</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QPushButton" name="add_btn_3_1">
-              <property name="text">
-               <string>Добавить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup3_1</string>
-              </attribute>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="del_btn_3_1">
-              <property name="text">
-               <string>Удалить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup3_1</string>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="tab3_2">
-          <attribute name="title">
-           <string>Виды мероприятий</string>
-          </attribute>
-          <widget class="QTableView" name="tableView_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>681</width>
-             <height>251</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QWidget" name="horizontalLayoutWidget_4">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>290</y>
-             <width>295</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QPushButton" name="add_btn_3_2">
-              <property name="text">
-               <string>Добавить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup3_2</string>
-              </attribute>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="del_btn_3_2">
-              <property name="text">
-               <string>Удалить</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">buttonGroup3_2</string>
-              </attribute>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </widget>
-       </widget>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QPushButton" name="reload_btn">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>0</y>
-      <width>151</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Перезагрузить данные</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>26</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
- </widget>
- <resources/>
- <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup2_1"/>
-  <buttongroup name="buttonGroup2_2"/>
-  <buttongroup name="buttonGroup3_1"/>
-  <buttongroup name="buttonGroup3_2"/>
- </buttongroups>
-</ui>
-"""
-add_ui_templ = """<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>501</width>
-    <height>249</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Добавить мероприятие</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QDateEdit" name="dateEdit">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>90</y>
-      <width>110</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="comboBox">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>90</y>
-      <width>91</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPlainTextEdit" name="plainTextEdit">
-    <property name="geometry">
-     <rect>
-      <x>323</x>
-      <y>80</y>
-      <width>131</width>
-      <height>87</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>30</y>
-      <width>431</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Время:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Вид мероприятия:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Описание мероприятия:</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="horizontalLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>150</y>
-      <width>201</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="add_btn">
-       <property name="text">
-        <string>Добавить</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="cancel_btn">
-       <property name="text">
-        <string>Отмена</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>501</width>
-     <height>26</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
- </widget>
- <resources/>
- <connections/>
-</ui>
-"""
+
+def check_date(date1, date2):
+
+    date1 = datetime.datetime.strptime(date1[0], "%d.%m.%Y %H:%M:%S")
+    date2 = datetime.datetime.strptime(date1[1], "%d.%m.%Y %H:%M:%S")
+    date3 = datetime.datetime.strptime(date2[0], "%d.%m.%Y %H:%M:%S")
+    date4 = datetime.datetime.strptime(date2[1], "%d.%m.%Y %H:%M:%S")
+
+    if date3 >= date4:
+        return False
+    if date3 >= date1 and date3 <= date2 or date4 >= date1 and date4 <= date2:
+        return False
+    else:
+        return True
+
+
+
+check_date('03.12.2023', '08:49:00', '04.12.2023', '15:16:00')
 
 
 class App(QMainWindow):
     def __init__(self):
         super().__init__()
-        f = io.StringIO(ui_templ)
         self.titles = ['id', 'event_id', 'room_id', 'date_start', 'date_end',
                        'description', 'status_id', 'work_type_id']
         self.modified = []
@@ -539,6 +121,9 @@ class App(QMainWindow):
 
         self.change_btn_2_7.clicked.connect(self.change_book_form)
         self.change_btn_3_7.clicked.connect(self.change_book_form)
+
+        self.book_btn_2_1.clicked.connect(self.open_book_form)
+        self.book_btn_3_1.clicked.connect(self.open_book_form)
 
     def add_type(self):
         type, ok_pressed = QInputDialog.getText(self, 'Введите тип мероприятия', '', )
@@ -705,9 +290,11 @@ ON b.room_id = r.id""").fetchall()
         print(result)
         if len(result) != 0:
             self.book_2_7.setColumnCount(len(result[0]))
-            self.book_2_7.setHorizontalHeaderLabels(['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
+            self.book_2_7.setHorizontalHeaderLabels(
+                ['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
             self.book_3_7.setColumnCount(len(result[0]))
-            self.book_3_7.setHorizontalHeaderLabels(['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
+            self.book_3_7.setHorizontalHeaderLabels(
+                ['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
             self.book_2_7.setRowCount(0)
             self.book_3_7.setRowCount(0)
             for i, row in enumerate(result):
@@ -946,7 +533,19 @@ id мероприятия: {data[1]}
         self.second_form.show()
 
     def open_book_form(self):
-        self.book_form = BookForm(self)
+        data = []
+        if self.sender().objectName() in ['book_btn_2_1', 'book_btn_3_1']:
+            btn = {'book_btn_2_1': self.tableView_3, 'book_btn_3_1': self.tableView_4}
+            table = btn[self.sender().objectName()]
+            row = -1
+            for index in sorted(table.selectionModel().selectedRows()):
+                row = index.row()
+
+            data = []
+            if row == -1:
+                return None
+            data.append(table.model().data(table.model().index(row, 0)))
+        self.book_form = BookForm(self, data)
         self.book_form.show()
 
     def change_book_form(self):
@@ -969,7 +568,6 @@ class SecondForm(QMainWindow):
     def __init__(self, main):
         self.main = main
         super().__init__()
-        f1 = io.StringIO(add_ui_templ)
         uic.loadUi('add_ui.ui', self)
         self.initUi()
 
@@ -1059,45 +657,85 @@ class OrderForm(QMainWindow):
     def cancel(self):
         self.close()
 
+
 class BookForm(QMainWindow):
     def __init__(self, main, data=[]):
-        self.main = main
-        self.data = data
-        super().__init__()
-        uic.loadUi('book.ui', self)
-        self.initUi()
+        try:
+            self.main = main
+            self.data = data
+            super().__init__()
+            uic.loadUi('book.ui', self)
+            self.initUi()
+        except Exception as e:
+            print(e)
 
     def initUi(self):
         try:
             self.setFixedSize(540, 420)
             event_id_list = cur.execute("""SELECT id FROM event""").fetchall()
-            room_list = cur.execute("""SELECT id, name FROM room WHERE id not in 
-                                        (SELECT room_id FROM booking)""").fetchall()
+            room_list = cur.execute("""SELECT id, name FROM room""").fetchall()
             print(room_list, self.data)
 
             self.event_id_combo.clear()
-            for i in event_id_list:
-                self.event_id_combo.addItem(str(i[0]))
-            self.event_id_combo.setCurrentIndex(2)
+            if len(self.data) == 1:
+                self.event_id_combo.addItem(str(self.data[0]))
+            else:
+
+                for i in event_id_list:
+                    self.event_id_combo.addItem(str(i[0]))
+                self.event_id_combo.setCurrentIndex(2)
             self.room_combo.clear()
             for i in room_list:
                 self.room_combo.addItem(f'{i[1]}({i[0]})')
-            if self.data:
-                self.event_id_combo.setCurrentText(self.data[2])
-                room_id = cur.execute("SELECT id FROM room WHERE name = ?", (self.data[7], )).fetchone()[0]
+
+            if len(self.data) == 9:
+
+                self.event_id_combo.setCurrentText(self.data[1])
+                print(self.data)
+                room_id = cur.execute("SELECT id FROM room WHERE name = ?", (self.data[7],)).fetchone()[0]
                 room = f'{self.data[7]}({room_id})'
                 self.room_combo.addItem(room)
                 self.room_combo.setCurrentText(room)
                 self.comment_text.appendPlainText(self.data[8])
-                date_start = QtCore.QDate.fromString(self.data[3], "d-MMM-yyyy")
+                date_start = QtCore.QDate.fromString(self.data[3], 'dd.MM.yyyy')
+                time_start = QtCore.QTime.fromString(self.data[4])
+                date_end = QtCore.QDate.fromString(self.data[5], 'dd.MM.yyyy')
+                time_end = QtCore.QTime.fromString(self.data[6])
                 self.start_edit.setDate(date_start)
-            self.ok_btn.clicked.connect(self.add)
+                self.start_edit.setTime(time_start)
+                self.end_edit.setDate(date_end)
+                self.end_edit.setTime(time_end)
+                self.ok_btn.clicked.connect(self.update)
+            else:
+                self.ok_btn.clicked.connect(self.add)
             self.cancel_btn.clicked.connect(self.cancel)
         except Exception as e:
             print(e)
 
     def add(self):
-        pass
+        try:
+            date = datetime.date.today().strftime('%d.%m.%Y')
+            date_start = self.start_edit.date().toString('dd.MM.yyyy')
+            time_start = self.start_edit.time().toString()
+            date_end = self.end_edit.date().toString('dd.MM.yyyy')
+            time_end = self.end_edit.time().toString()
+            check_date(date_start, time_start, date_end, time_end)
+            event_id = int(self.event_id_combo.currentText())
+            room_id = self.room_combo.currentText()
+            room_id = int(room_id[room_id.find('(') + 1:-1])
+            comment = self.comment_text.toPlainText()
+            print(date, event_id, date_start, time_start, date_end, time_end, room_id, comment)
+            cur.execute("""INSERT INTO booking(date, event_id, date_start, time_start, date_end, time_end, room_id,
+                        comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?)""",
+                        (date, event_id, date_start, time_start, date_end, time_end, room_id, comment))
+
+            conn.commit()
+            self.main.load_data()
+            self.close()
+        except Exception as e:
+            print(e)
+
+    def update(self):
         try:
             date = datetime.date.today().strftime('%d.%m.%Y')
             date_start = self.start_edit.date().toString('dd.MM.yyyy')
@@ -1108,10 +746,11 @@ class BookForm(QMainWindow):
             room_id = self.room_combo.currentText()
             room_id = int(room_id[room_id.find('(') + 1:-1])
             comment = self.comment_text.toPlainText()
-            print(date, event_id, date_start,time_start, date_end, time_end, room_id, comment)
-            cur.execute("""INSERT INTO booking(date, event_id, date_start, time_start, date_end, time_end, room_id,
-                        comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?)""",
-                        (date, event_id, date_start,time_start, date_end, time_end, room_id, comment))
+            print(date, event_id, date_start, time_start, date_end, time_end, room_id, comment)
+            cur.execute("""UPDATE booking SET
+             date = ?, event_id= ?, date_start= ?, time_start= ?, date_end= ?, time_end= ?, room_id= ?,
+                                comment= ? WHERE id = ?""",
+                        (date, event_id, date_start, time_start, date_end, time_end, room_id, comment, self.data[0]))
 
             conn.commit()
             self.main.load_data()
