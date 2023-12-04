@@ -130,6 +130,9 @@ class App(QMainWindow):
         self.book_btn_2_1.clicked.connect(self.open_book_form)
         self.book_btn_3_1.clicked.connect(self.open_book_form)
 
+        self.load_btn_2_8.clicked.connect(self.load_rooms)
+        self.load_btn_3_8.clicked.connect(self.load_rooms)
+
     def add_type(self):
         type, ok_pressed = QInputDialog.getText(self, 'Введите тип мероприятия', '', )
         if ok_pressed:
@@ -567,6 +570,56 @@ id мероприятия: {data[1]}
             data.append(table.model().data(table.model().index(row, col)))
         self.book_form = BookForm(self, data)
         self.book_form.show()
+
+    def load_rooms(self):
+        try:
+
+            btn = {'load_btn_2_8': self.table_2, 'load_btn_3_8': self.table_3}
+            table = btn[self.sender().objectName()]
+            table.clear()
+            if self.sender().objectName() == 'load_btn_2_8':
+                date = self.date_edit_2.date().toString('dd.MM.yyyy')
+            else:
+                date = self.date_edit_3.date().toString('dd.MM.yyyy')
+            date = datetime.datetime.strptime(date, "%d.%m.%Y")
+            room_list = cur.execute("""SELECT r.id, name, b.date_start, b.time_start, b.date_end, b.time_end  
+                                            FROM room as r INNER JOIN booking as b ON r.id = b.room_id""").fetchall()
+            r_list = cur.execute("""SELECT id, name FROM room""").fetchall()
+            print(*room_list)
+            print(*r_list)
+            table.setColumnCount(2)
+            table.setHorizontalHeaderLabels(['id', 'name'])
+            table.setRowCount(0)
+            not_lst = []
+            show_list = []
+            for i, row in enumerate(room_list + r_list):
+                print(row, show_list, not_lst)
+                if len(row) > 2:
+                    date1 = datetime.datetime.strptime(row[2], "%d.%m.%Y")
+                    date2 = datetime.datetime.strptime(row[4], "%d.%m.%Y")
+                    if not (date >= date1 and date <= date2):
+                        if row[:2] not in show_list:
+                            show_list.append(row[:2])
+                    else:
+                        not_lst.append(row[1])
+                if len(row) == 2:
+                    if row not in show_list:
+                        show_list.append(row)
+            print()
+            print(show_list)
+            for i in show_list:
+                if i[1] in not_lst:
+                    show_list.remove(i)
+            for i, elem in enumerate(show_list):
+                print(i, elem, not_lst)
+                print(True)
+                table.setRowCount(table.rowCount() + 1)
+                table.setItem(i, 0, QTableWidgetItem(str(elem[0])))
+                table.setItem(i, 1, QTableWidgetItem(str(elem[1])))
+            print(not_lst)
+            table.resizeColumnsToContents()
+        except Exception as e:
+            print(e)
 
 
 class SecondForm(QMainWindow):

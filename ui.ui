@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>937</width>
     <height>575</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <rect>
       <x>30</x>
       <y>30</y>
-      <width>741</width>
+      <width>851</width>
       <height>481</height>
      </rect>
     </property>
@@ -103,12 +103,12 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>731</width>
+           <width>841</width>
            <height>451</height>
           </rect>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>7</number>
          </property>
          <widget class="QWidget" name="tab2_1">
           <attribute name="title">
@@ -433,6 +433,70 @@
            </layout>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab2_8">
+          <attribute name="title">
+           <string>Свободные помещения</string>
+          </attribute>
+          <widget class="QLabel" name="label_3">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>30</y>
+             <width>111</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Дата бронирования:</string>
+           </property>
+          </widget>
+          <widget class="QDateEdit" name="date_edit_2">
+           <property name="geometry">
+            <rect>
+             <x>150</x>
+             <y>30</y>
+             <width>110</width>
+             <height>22</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_4">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>70</y>
+             <width>141</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Свободные помещения:</string>
+           </property>
+          </widget>
+          <widget class="QTableWidget" name="table_2">
+           <property name="geometry">
+            <rect>
+             <x>180</x>
+             <y>70</y>
+             <width>256</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="load_btn_2_8">
+           <property name="geometry">
+            <rect>
+             <x>280</x>
+             <y>30</y>
+             <width>75</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Загрузить</string>
+           </property>
+          </widget>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="tab3">
@@ -444,12 +508,12 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>741</width>
+           <width>841</width>
            <height>451</height>
           </rect>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>7</number>
          </property>
          <widget class="QWidget" name="tab3_1">
           <attribute name="title">
@@ -771,6 +835,70 @@
            </layout>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab3_8">
+          <attribute name="title">
+           <string>Свободные помещения</string>
+          </attribute>
+          <widget class="QLabel" name="label_5">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>70</y>
+             <width>131</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Свободные помещения:</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_6">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>30</y>
+             <width>111</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Дата бронирования:</string>
+           </property>
+          </widget>
+          <widget class="QDateEdit" name="date_edit_3">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>30</y>
+             <width>110</width>
+             <height>22</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QTableWidget" name="table_3">
+           <property name="geometry">
+            <rect>
+             <x>190</x>
+             <y>70</y>
+             <width>256</width>
+             <height>192</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="load_btn_3_8">
+           <property name="geometry">
+            <rect>
+             <x>290</x>
+             <y>30</y>
+             <width>75</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Загрузить</string>
+           </property>
+          </widget>
+         </widget>
         </widget>
        </widget>
       </widget>
@@ -796,7 +924,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>937</width>
      <height>21</height>
     </rect>
    </property>
@@ -806,8 +934,8 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup3_2"/>
+  <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup3_1"/>
   <buttongroup name="buttonGroup2_1"/>
  </buttongroups>
