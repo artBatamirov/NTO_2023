@@ -30,7 +30,7 @@
         <enum>QTabWidget::North</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <property name="tabBarAutoHide">
         <bool>false</bool>
@@ -496,6 +496,19 @@
             <string>Загрузить</string>
            </property>
           </widget>
+          <widget class="QPushButton" name="book_btn_2_8">
+           <property name="geometry">
+            <rect>
+             <x>360</x>
+             <y>30</y>
+             <width>91</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Забронировать</string>
+           </property>
+          </widget>
          </widget>
         </widget>
        </widget>
@@ -885,17 +898,17 @@
             </rect>
            </property>
           </widget>
-          <widget class="QPushButton" name="load_btn_3_8">
+          <widget class="QPushButton" name="book_btn_3_8">
            <property name="geometry">
             <rect>
-             <x>290</x>
+             <x>370</x>
              <y>30</y>
-             <width>75</width>
+             <width>91</width>
              <height>23</height>
             </rect>
            </property>
            <property name="text">
-            <string>Загрузить</string>
+            <string>Забронировать</string>
            </property>
           </widget>
          </widget>
@@ -934,9 +947,9 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroup2_1"/>
+  <buttongroup name="buttonGroup3_1"/>
   <buttongroup name="buttonGroup3_2"/>
   <buttongroup name="buttonGroup2_2"/>
-  <buttongroup name="buttonGroup3_1"/>
-  <buttongroup name="buttonGroup2_1"/>
  </buttongroups>
 </ui>

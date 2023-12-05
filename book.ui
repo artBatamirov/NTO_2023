@@ -126,17 +126,17 @@
     <string>Cancel</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="reload_btn">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>26</x>
      <y>10</y>
-     <width>75</width>
-     <height>23</height>
+     <width>271</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Загрузить</string>
+    <string/>
    </property>
   </widget>
  </widget>
