@@ -16,8 +16,8 @@
   <widget class="QPlainTextEdit" name="comment_text">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>90</y>
+     <x>350</x>
+     <y>60</y>
      <width>161</width>
      <height>111</height>
     </rect>
@@ -26,8 +26,8 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>60</y>
+     <x>350</x>
+     <y>30</y>
      <width>81</width>
      <height>16</height>
     </rect>
@@ -39,10 +39,10 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>33</x>
-     <y>75</y>
+     <x>30</x>
+     <y>30</y>
      <width>281</width>
-     <height>121</height>
+     <height>160</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -58,6 +58,19 @@
     <property name="rightMargin">
      <number>0</number>
     </property>
+    <item row="1" column="0">
+     <widget class="QComboBox" name="event_id_combo"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QDateTimeEdit" name="start_edit"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Часть комнаты:</string>
+      </property>
+     </widget>
+    </item>
     <item row="2" column="1">
      <widget class="QLabel" name="label_3">
       <property name="text">
@@ -65,8 +78,8 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QComboBox" name="event_id_combo"/>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="room_combo"/>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
@@ -89,14 +102,22 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QComboBox" name="room_combo"/>
-    </item>
-    <item row="3" column="0">
-     <widget class="QDateTimeEdit" name="start_edit"/>
-    </item>
     <item row="3" column="1">
      <widget class="QDateTimeEdit" name="end_edit"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QComboBox" name="part_combo">
+      <item>
+       <property name="text">
+        <string>часть</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>полностью</string>
+       </property>
+      </item>
+     </widget>
     </item>
    </layout>
   </widget>

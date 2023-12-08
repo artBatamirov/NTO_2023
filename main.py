@@ -39,8 +39,8 @@ def convert_to_date(date):
 class App(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.titles = ['id', 'event_id', 'room_id', 'date_start', 'date_end',
-                       'description', 'status_id', 'work_type_id']
+        self.titles = ['id', 'event_id', 'room', 'date_start', 'date_end',
+                       'description', 'status', 'work_type']
         self.modified = []
         uic.loadUi('ui.ui', self)
         self.initUi()
@@ -115,10 +115,8 @@ class App(QMainWindow):
 
         self.add_btn_2_3.clicked.connect(self.add_order)
         self.add_btn_3_3.clicked.connect(self.add_order)
-        self.order_2.itemChanged.connect(self.item_changed)
-        self.order_3.itemChanged.connect(self.item_changed)
-        self.change_btn_2_3.clicked.connect(self.save_results)
-        self.change_btn_3_3.clicked.connect(self.save_results)
+        self.change_btn_2_3.clicked.connect(self.change_order)
+        self.change_btn_3_3.clicked.connect(self.change_order)
 
         self.del_btn_2_7.clicked.connect(self.del_booking)
         self.del_btn_3_7.clicked.connect(self.del_booking)
@@ -220,8 +218,10 @@ class App(QMainWindow):
             self.room_3.resizeColumnsToContents()
 
             # заявки
-            result = cur.execute("""SELECT id, event_id, room_id, date_start, date_end, description, status_id, 
-                                                        work_type_id FROM work_order""").fetchall()
+            result = cur.execute("""SELECT wo.id, event_id, r.name, date_start, date_end, description, s.name , w.name 
+                                    FROM work_order as wo INNER JOIN room as r ON r.id = wo.room_id INNER JOIN 
+                                    status as s ON s.id = wo.status_id INNER JOIN work_type as w 
+                                    ON w.id = wo.work_type_id""").fetchall()
             if len(result) != 0:
                 self.order_2.setColumnCount(len(result[0]))
                 self.order_2.setHorizontalHeaderLabels(self.titles)
@@ -232,7 +232,7 @@ class App(QMainWindow):
                 for i, row in enumerate(result):
                     self.order_2.setRowCount(self.order_2.rowCount() + 1)
                     self.order_3.setRowCount(self.order_3.rowCount() + 1)
-                    colors = {1: (255, 255, 255), 2: (255, 192, 203), 3: (128, 128, 128)}
+                    colors = {'Выполнена': (255, 255, 255), 'К выполнению': (255, 192, 203), 'Создана': (128, 128, 128)}
                     color = colors[row[6]]
                     for j, elem in enumerate(row):
                         self.order_2.setItem(i, j, QTableWidgetItem(str(elem)))
@@ -294,7 +294,8 @@ class App(QMainWindow):
             print(e)
 
     def load_book(self):
-        result = cur.execute("""SELECT b.id, event_id, date, date_start, time_start, date_end, time_end, r.name, comment 
+        result = cur.execute("""SELECT b.id, event_id, date, date_start, time_start, date_end, time_end, r.name, 
+comment, part_of_room 
 FROM 
 booking b
 INNER JOIN 
@@ -304,10 +305,12 @@ ON b.room_id = r.id""").fetchall()
         if len(result) != 0:
             self.book_2_7.setColumnCount(len(result[0]))
             self.book_2_7.setHorizontalHeaderLabels(
-                ['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
+                ['id', 'event_id', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment',
+                 'part_of_room'])
             self.book_3_7.setColumnCount(len(result[0]))
             self.book_3_7.setHorizontalHeaderLabels(
-                ['id', 'event', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment'])
+                ['id', 'event_id', 'date', 'date_start', 'time_start', 'date_end', 'time_end', 'room', 'comment',
+                 'part_of_room'])
             self.book_2_7.setRowCount(0)
             self.book_3_7.setRowCount(0)
             for i, row in enumerate(result):
@@ -339,7 +342,7 @@ ON b.room_id = r.id""").fetchall()
         msg.setText(
             f'''Вы дейсвительно хотите удалить данные?\nid: {data[0]}
 date: {data[1]}\nevent: {data[2]}\ndata_start: {data[3]}\ntime_start: {data[4]}
-data_end: {data[5]}\ntime_end: {data[6]}\nroom: {data[7]}\ncomment: {data[8]}''')
+data_end: {data[5]}\ntime_end: {data[6]}\nroom: {data[7]}\ncomment: {data[8]}\npart_of_room: {data[9]}''')
         msg.setWindowTitle("Удалить данные")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         retval = msg.exec_()
@@ -513,30 +516,23 @@ id мероприятия: {data[1]}
             except Exception as e:
                 print(e)
 
-    def item_changed(self, item):
+    def change_order(self):
+        btn = {'change_btn_2_3': self.order_2, 'change_btn_3_3': self.order_3}
+        table = btn[self.sender().objectName()]
+        row = -1
+        for index in sorted(table.selectionModel().selectedRows()):
+            row = index.row()
 
-        self.modified.append((self.titles[item.column()], item.text(), int(self.order_2.item(item.row(), 0).text())))
-        print(self.modified)
-
-    def save_results(self):
-        try:
-            for i in self.modified:
-                que = "UPDATE work_order SET\n"
-                print(i)
-                if i[0] not in ['description', 'date_start', 'date_end']:
-                    que += f"{i[0]} = {int(i[1])}"
-                else:
-                    que += f"{i[0]} = '{i[1]}'"
-                que += f" WHERE id = {i[2]}"
-                cur.execute(que)
-            conn.commit()
-            self.modified.clear()
-            self.load_data()
-        except Exception as e:
-            print(e)
+        data = []
+        if row == -1:
+            return None
+        for col in range(table.model().columnCount()):
+            data.append(table.model().data(table.model().index(row, col)))
+        self.order_form = OrderForm(self, data)
+        self.order_form.show()
 
     def add_order(self):
-        self.order_form = OrderForm(self)
+        self.order_form = OrderForm(self, [])
         self.order_form.show()
 
     def open_second_form(self):
@@ -664,8 +660,10 @@ class SecondForm(QMainWindow):
 
 
 class OrderForm(QMainWindow):
-    def __init__(self, main):
+    def __init__(self, main, data):
         self.main = main
+        self.data = data
+        print(self.data)
         super().__init__()
         # f1 = io.StringIO(add_ui_templ)
         uic.loadUi('add_order.ui', self)
@@ -691,7 +689,20 @@ class OrderForm(QMainWindow):
             self.work_type_combo.clear()
             for i in work_type_list:
                 self.work_type_combo.addItem(f'{i[1]}({i[0]})')
-
+            if self.data:
+                self.event_id_combo.setCurrentText(str(self.data[1]))
+                r_id = cur.execute("SELECT id FROM room WHERE name = ?", (self.data[2], )).fetchone()[0]
+                self.room_id_combo.setCurrentText(f'{self.data[2]}({r_id})')
+                s_id = cur.execute("SELECT id FROM status WHERE name = ?", (self.data[6], )).fetchone()[0]
+                self.status_combo.setCurrentText(f'{self.data[6]}({s_id})')
+                w_id = cur.execute("SELECT id FROM work_type WHERE name = ?", (self.data[7], )).fetchone()[0]
+                self.work_type_combo.setCurrentText(f'{self.data[7]}({w_id})')
+                date_start = QtCore.QDate.fromString(self.data[3], 'dd.MM.yyyy')
+                date_end = QtCore.QDate.fromString(self.data[4], 'dd.MM.yyyy')
+                self.date_start.setDate(date_start)
+                self.date_end.setDate(date_end)
+                self.description_text.appendPlainText(self.data[5])
+                print('hello')
             self.ok_btn.clicked.connect(self.add)
             self.cancel_btn.clicked.connect(self.cancel)
         except Exception as e:
@@ -709,10 +720,15 @@ class OrderForm(QMainWindow):
             status_id = self.status_combo.currentText()
             status_id = int(status_id[status_id.find('(') + 1:-1])
             description = self.description_text.toPlainText()
-            cur.execute("""INSERT INTO work_order(event_id, room_id, date_start, date_end, description, 
+            if self.data:
+
+                cur.execute("""UPDATE work_order SET event_id = ?, room_id = ?, date_start = ?, date_end = ?, 
+                description = ?, status_id = ?, work_type_id = ? WHERE id = ?""",
+                            (event_id, room_id, start, end, description, status_id, work_type_id, self.data[0]))
+            else:
+                cur.execute("""INSERT INTO work_order(event_id, room_id, date_start, date_end, description, 
                             status_id, work_type_id) VALUES(?, ?, ?, ?, ?, ?, ?)""",
                         (event_id, room_id, start, end, description, status_id, work_type_id))
-
             conn.commit()
             self.main.load_data()
             self.close()
@@ -743,6 +759,7 @@ class BookForm(QMainWindow):
             self.end_edit.dateTimeChanged.connect(self.load)
             event_id_list = cur.execute("""SELECT id FROM event""").fetchall()
             room_list = cur.execute("""SELECT id, name FROM room""").fetchall()
+
             print(room_list, self.data)
 
             self.event_id_combo.clear()
@@ -795,13 +812,14 @@ class BookForm(QMainWindow):
                 time_end = self.end_edit.time().toString()
                 ds1 = convert_to_date(date_start + ' ' + time_start)
                 de1 = convert_to_date(date_end + ' ' + time_end)
-                room_list = cur.execute("""SELECT r.id, name, b.date_start, b.time_start, b.date_end, b.time_end, b.id  
+                room_list = cur.execute("""SELECT r.id, name, b.date_start, b.time_start, b.date_end, 
+                                            b.time_end, b.id, b.part_of_room, division
                                             FROM room as r INNER JOIN booking as b ON r.id = b.room_id""").fetchall()
-                r_list = cur.execute("""SELECT id, name FROM room """).fetchall()
+                r_list = cur.execute("""SELECT id, name, division FROM room """).fetchall()
                 self.room_combo.clear()
 
                 if len(room_list + r_list) == 0:
-                    self.room_combo.addItem('забронированоу')
+                    self.room_combo.addItem('забронировано')
                 if ds1 > de1:
                     self.room_combo.addItem('неправильная дата')
                 else:
@@ -836,6 +854,7 @@ class BookForm(QMainWindow):
             time_start = self.start_edit.time().toString()
             date_end = self.end_edit.date().toString('dd.MM.yyyy')
             time_end = self.end_edit.time().toString()
+            part = self.part_combo.currentText()
             ds1 = convert_to_date(date_start + ' ' + time_start)
             de1 = convert_to_date(date_end + ' ' + time_end)
             if de1 <= ds1:
@@ -864,8 +883,9 @@ class BookForm(QMainWindow):
                         f = False
             if f:
                 cur.execute("""INSERT INTO booking(date, event_id, date_start, time_start, 
-                                        date_end, time_end, room_id, comment) VALUES(?, ?, ?, ?, ?, ?, ?, ?)""",
-                            (date, event_id, date_start, time_start, date_end, time_end, room_id, comment))
+                                        date_end, time_end, room_id, comment, part_of_room) 
+                                        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                            (date, event_id, date_start, time_start, date_end, time_end, room_id, comment, part))
                 conn.commit()
                 self.main.load_data()
                 self.close()
@@ -887,7 +907,7 @@ class BookForm(QMainWindow):
             ds1 = convert_to_date(date_start + ' ' + time_start)
             de1 = convert_to_date(date_end + ' ' + time_end)
             room_list = cur.execute("""SELECT r.id, name, b.date_start, b.time_start, b.date_end, b.time_end  
-                                                    FROM room as r INNER JOIN booking as b ON r.id = b.room_id""").fetchall()
+                                        FROM room as r INNER JOIN booking as b ON r.id = b.room_id""").fetchall()
             for i in room_list:
                 if i[0] != room_id:
                     ds2 = convert_to_date(i[2] + ' ' + i[3])
