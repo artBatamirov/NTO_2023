@@ -87,6 +87,13 @@ class App(QMainWindow):
         self.table_3.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table_3.setSelectionBehavior(QAbstractItemView.SelectRows)
 
+        self.teacher_table.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.teacher_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.club_type_table.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.club_type_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.club_table.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.club_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+
         self.load_data()
         self.add_btn_2_2.clicked.connect(self.add_type)
         self.add_btn_3_2.clicked.connect(self.add_type)
@@ -139,7 +146,13 @@ class App(QMainWindow):
         self.date_edit_2.dateTimeChanged.connect(self.load_rooms)
         self.date_edit_3.dateTimeChanged.connect(self.load_rooms)
 
+        self.del_btn_1_2.clicked.connect(self.del_row_name)
+        self.del_btn_1_3.clicked.connect(self.del_row_name)
+        self.add_btn_1_2.clicked.connect(self.add_name)
+        self.add_btn_1_3.clicked.connect(self.add_name)
 
+        self.add_btn_1_5.clicked.connect(self.open_club_from)
+        self.del_btn_1_5.clicked.connect(self.del_club)
     def add_type(self):
         type, ok_pressed = QInputDialog.getText(self, 'Введите тип мероприятия', '', )
         if ok_pressed:
@@ -152,12 +165,20 @@ class App(QMainWindow):
         db_names = ['add_btn_2_4', 'add_btn_3_4']
         if self.sender().objectName() in db_names:
             text = 'Введите вид работы:'
+        elif self.sender().objectName() == 'add_btn_1_2':
+            text = 'Введите имя преподавателя:'
+        elif self.sender().objectName() == 'add_btn_1_3':
+            text = 'Введите вид кружка:'
         else:
             text = 'Введите название помещения:'
         name, ok_pressed = QInputDialog.getText(self, text, '', )
         if ok_pressed:
             if self.sender().objectName() in db_names:
                 cur.execute("""INSERT INTO work_type(name) VALUES(?)""", (name,))
+            elif self.sender().objectName() == 'add_btn_1_2':
+                cur.execute("""INSERT INTO teacher(name) VALUES(?)""", (name,))
+            elif self.sender().objectName() == 'add_btn_1_3':
+                cur.execute("""INSERT INTO club_type(name) VALUES(?)""", (name,))
             else:
                 cur.execute("""INSERT INTO room(name) VALUES(?)""", (name,))
             conn.commit()
@@ -217,6 +238,32 @@ class App(QMainWindow):
             self.room_3.setModel(self.model5)
             self.room_3.resizeColumnsToContents()
 
+            self.model6 = QSqlTableModel(self)
+            self.model6.setTable("teacher")
+            self.model6.setEditStrategy(QSqlTableModel.OnFieldChange)
+            self.model6.setHeaderData(0, Qt.Horizontal, "id")
+            self.model6.setHeaderData(1, Qt.Horizontal, "name")
+            self.model6.select()
+            self.teacher_table.setModel(self.model6)
+            self.teacher_table.resizeColumnsToContents()
+
+            self.model7 = QSqlTableModel(self)
+            self.model7.setTable("club_type")
+            self.model7.setEditStrategy(QSqlTableModel.OnFieldChange)
+            self.model7.setHeaderData(0, Qt.Horizontal, "id")
+            self.model7.setHeaderData(1, Qt.Horizontal, "name")
+            self.model7.select()
+            self.club_type_table.setModel(self.model7)
+            self.club_type_table.resizeColumnsToContents()
+
+            self.model8 = QSqlTableModel(self)
+            self.model8.setTable("weekday")
+            self.model8.setEditStrategy(QSqlTableModel.OnFieldChange)
+            self.model8.select()
+            self.weekday_table.setModel(self.model8)
+            self.weekday_table.resizeColumnsToContents()
+
+
             # заявки
             result = cur.execute("""SELECT wo.id, event_id, r.name, date_start, date_end, description, s.name , w.name 
                                     FROM work_order as wo INNER JOIN room as r ON r.id = wo.room_id INNER JOIN 
@@ -259,6 +306,7 @@ class App(QMainWindow):
 
             self.load_desktop()
             self.load_book()
+            self.load_club()
 
 
         except Exception as e:
@@ -292,6 +340,57 @@ class App(QMainWindow):
                 self.desktop_3.resizeColumnsToContents()
         except Exception as e:
             print(e)
+
+    def load_club(self):
+        try:
+            # кружки
+            self.club_table.setColumnCount(11)
+            self.club_table.setHorizontalHeaderLabels(['id', 'name', 'date_start', 'club_type', 'room',
+                                                'class_1', 'class_2', 'class_3', 'time_start', 'time_end', 'teacher'])
+
+            result = cur.execute("""SELECT c.id, c.name, date_start, ct.name as club_type, r.name as room, class_1,
+             class_2, class_3, time_start, time_end, t.name as teacher FROM club as c INNER JOIN club_type as ct
+              ON c.club_type_id = ct.id INNER JOIN room as r ON r.id = c.room_id INNER JOIN teacher as t
+               ON t.id = c.teacher_id""").fetchall()
+            print(result)
+            self.club_table.setRowCount(0)
+            for i, row in enumerate(result):
+                self.club_table.setRowCount(self.club_table.rowCount() + 1)
+                for j, elem in enumerate(row):
+                    self.club_table.setItem(i, j, QTableWidgetItem(str(elem)))
+            self.club_table.resizeColumnsToContents()
+        except Exception as e:
+            print(e)
+
+    def open_club_from(self):
+        self.club_form = ClubForm(self)
+        self.club_form.show()
+
+    def del_club(self):
+        table = self.club_table
+        row = -1
+        for index in sorted(table.selectionModel().selectedRows()):
+            row = index.row()
+        data = []
+
+        if row == -1:
+            return None
+        for col in range(table.model().columnCount()):
+            data.append(table.model().data(table.model().index(row, col)))
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.resize(100, 100)
+        msg.setText(
+            f'''Вы дейсвительно хотите удалить данные?\nid: {data[0]}
+name: {data[1]}\ndate_start: {data[2]}\nclub_type: {data[3]}\nroom: {data[4]}
+classes: {data[5]}, {data[6]}, {data[7]}\ntime_start: {data[8]}\ntime_end: {data[9]}\nteacher: {data[10]}''')
+        msg.setWindowTitle("Удалить данные")
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        retval = msg.exec_()
+        if msg.clickedButton().text() == 'OK':
+            cur.execute("""DELETE FROM club WHERE id = ?""", (data[0],))
+            conn.commit()
+            self.load_data()
 
     def load_book(self):
         result = cur.execute("""SELECT b.id, event_id, date, date_start, time_start, date_end, time_end, r.name, 
@@ -417,20 +516,18 @@ data_end: {data[5]}\ntime_end: {data[6]}\nroom: {data[7]}\ncomment: {data[8]}\np
         f = True
         btn = {'del_btn_2_4': self.work_type_2, 'del_btn_2_5': self.room_2,
                'del_btn_3_4': self.work_type_3, 'del_btn_3_5': self.room_3,
-               'del_btn_1_1': self.room_1}
+               'del_btn_1_1': self.room_1,
+               'del_btn_1_2': self.teacher_table, 'del_btn_1_3': self.club_type_table}
         db_names = ['del_btn_2_4', 'del_btn_3_4']
         table = btn[self.sender().objectName()]
         row = -1
         for index in sorted(table.selectionModel().selectedRows()):
             row = index.row()
-        #     print('row', row)
-        # print(row, table.objectName())
         data = []
         if row == -1:
             return None
         for col in range(table.model().columnCount()):
             data.append(table.model().data(table.model().index(row, col)))
-        # print(data, self.sender().objectName())
 
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
@@ -438,17 +535,21 @@ data_end: {data[5]}\ntime_end: {data[6]}\nroom: {data[7]}\ncomment: {data[8]}\np
 
         if self.sender().objectName() in db_names[0]:
             not_del = conn.execute("""SELECT id FROM work_order WHERE work_type_id = ?""", (data[0],)).fetchall()
+        elif self.sender().objectName() == 'del_btn_1_2':
+            not_del = conn.execute("""SELECT id FROM club WHERE teacher_id = ?""", (data[0],)).fetchall()
+        elif self.sender().objectName() == 'del_btn_1_3':
+            not_del = conn.execute("""SELECT id FROM club WHERE club_type_id = ?""", (data[0],)).fetchall()
         else:
             not_del = conn.execute("""SELECT id FROM work_order WHERE room_id = ?""", (data[0],)).fetchall()
         # print(not_del)
         if len(not_del) == 0:
             f = True
 
-            msg.setText(f'''Вы дейсвительно хотите удалить данные?\nname: {data[1]}''')
+            msg.setText(f'''Вы дейсвительно хотите удалить данные?\nid: {data[0]}\nname: {data[1]}''')
         else:
             f = False
 
-            msg.setText(f'''Нельзя удалить данные\nname: {data[1]}''')
+            msg.setText(f'''Нельзя удалить данные\nid: {data[0]}\nname: {data[1]}''')
             msg.setStandardButtons(QMessageBox.Cancel)
 
         msg.setWindowTitle("Удалить данные")
@@ -459,6 +560,10 @@ data_end: {data[5]}\ntime_end: {data[6]}\nroom: {data[7]}\ncomment: {data[8]}\np
         if msg.clickedButton().text() == 'OK':
             if self.sender().objectName() in db_names[0]:
                 cur.execute("""DELETE FROM work_type WHERE id = ?""", (data[0],))
+            elif self.sender().objectName() == 'del_btn_1_2':
+                cur.execute("""DELETE FROM teacher WHERE id = ?""", (data[0],))
+            elif self.sender().objectName() == 'del_btn_1_3':
+                cur.execute("""DELETE FROM club_type WHERE id = ?""", (data[0],))
             else:
                 cur.execute("""DELETE FROM room WHERE id = ?""", (data[0],))
             conn.commit()
@@ -655,6 +760,72 @@ class SecondForm(QMainWindow):
         self.main.load_data()
         self.close()
 
+    def cancel(self):
+        self.close()
+
+class ClubForm(QMainWindow):
+    def __init__(self, main):
+        self.main = main
+        super().__init__()
+        uic.loadUi('club.ui', self)
+        self.initUi()
+
+    def initUi(self):
+        self.setFixedSize(800, 350)
+        club_types = cur.execute("""SELECT name FROM club_type""").fetchall()
+        rooms = cur.execute("""SELECT name FROM room""").fetchall()
+        teachers = cur.execute("""SELECT name FROM teacher""").fetchall()
+        self.club_type_combo.clear()
+        for i in club_types:
+             self.club_type_combo.addItem(i[0])
+        self.room_combo.clear()
+        for i in rooms:
+            self.room_combo.addItem(i[0])
+        self.teacher_combo.clear()
+        for i in teachers:
+            self.teacher_combo.addItem(i[0])
+        for btn in self.button_group.buttons():
+            btn.clicked.connect(self.ckeck_quantity)
+        self.ok_btn.clicked.connect(self.add)
+        self.cancel_btn.clicked.connect(self.cancel)
+
+    def add(self):
+        name = self.name_edit.text()
+        date_start = self.date_start_edit.date().toString('dd.MM.yyyy')
+        club_type_id = cur.execute("SELECT id FROM club_type WHERE name = ?",
+                                   (self.club_type_combo.currentText(),)).fetchone()[0]
+        room_id = cur.execute("SELECT id FROM room WHERE name = ?",
+                                   (self.room_combo.currentText(),)).fetchone()[0]
+        quantity = []
+        print(1)
+        for btn in self.button_group.buttons():
+            if btn.isChecked():
+                quantity.append(btn.text())
+        quantity += [''] * (3 - len(quantity))
+        time_start = self.time_start_edit.time().toString()
+        time_end = self.time_end_edit.time().toString()
+        teacher_id = cur.execute("SELECT id FROM teacher WHERE name = ?",
+                                   (self.teacher_combo.currentText(),)).fetchone()[0]
+        print(name, date_start, club_type_id, room_id, quantity, time_start, time_end, teacher_id)
+        if quantity:
+            self.label_error.setText('')
+            cur.execute("""INSERT INTO club(name, date_start, club_type_id, room_id, class_1, class_2, class_3, 
+                            time_start, time_end, teacher_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                        (name, date_start, club_type_id, room_id, quantity[0], quantity[1], quantity[2],
+                         time_start, time_end, teacher_id))
+            conn.commit()
+            self.main.load_data()
+            self.close()
+        else:
+            self.label_error.setText('Не указаны дни занятий!!!')
+
+    def ckeck_quantity(self):
+        s = 0
+        for btn in self.button_group.buttons():
+            if btn.isChecked():
+                s += 1
+            if s > 3:
+                self.sender().setChecked(False)
     def cancel(self):
         self.close()
 

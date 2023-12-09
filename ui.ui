@@ -30,7 +30,7 @@
         <enum>QTabWidget::North</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="tabBarAutoHide">
         <bool>false</bool>
@@ -44,14 +44,14 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>741</width>
+           <width>841</width>
            <height>451</height>
           </rect>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>4</number>
          </property>
-         <widget class="QWidget" name="tab_9">
+         <widget class="QWidget" name="tab1_1">
           <attribute name="title">
            <string>Помещения</string>
           </attribute>
@@ -90,6 +90,151 @@
              </widget>
             </item>
            </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab1_2">
+          <attribute name="title">
+           <string>Преподаватели</string>
+          </attribute>
+          <widget class="QTableView" name="teacher_table">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>251</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QWidget" name="horizontalLayoutWidget_14">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>310</y>
+             <width>295</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <item>
+             <widget class="QPushButton" name="add_btn_1_2">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_1_2">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab1_3">
+          <attribute name="title">
+           <string>Виды кружков</string>
+          </attribute>
+          <widget class="QWidget" name="horizontalLayoutWidget_15">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>310</y>
+             <width>295</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <widget class="QPushButton" name="add_btn_1_3">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_1_3">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QTableView" name="club_type_table">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>251</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab1_4">
+          <attribute name="title">
+           <string>Дни недели</string>
+          </attribute>
+          <widget class="QTableView" name="weekday_table">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>251</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab1_5">
+          <attribute name="title">
+           <string>Кружки</string>
+          </attribute>
+          <widget class="QWidget" name="horizontalLayoutWidget_16">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>330</y>
+             <width>239</width>
+             <height>80</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_16">
+            <item>
+             <widget class="QPushButton" name="add_btn_1_5">
+              <property name="text">
+               <string>Добавить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="change_btn_1_5">
+              <property name="text">
+               <string>Изменить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="del_btn_1_5">
+              <property name="text">
+               <string>Удалить</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QTableWidget" name="club_table">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>681</width>
+             <height>251</height>
+            </rect>
+           </property>
           </widget>
          </widget>
         </widget>
@@ -908,9 +1053,9 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup3_2"/>
-  <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup3_1"/>
+  <buttongroup name="buttonGroup2_2"/>
   <buttongroup name="buttonGroup2_1"/>
+  <buttongroup name="buttonGroup3_2"/>
  </buttongroups>
 </ui>
