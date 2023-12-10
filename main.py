@@ -8,6 +8,11 @@ from PyQt5.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QMessageBox, QInputDialog, QWidget, \
     QAbstractItemView, QTableWidgetItem
 import datetime
+from ui import Ui_MainWindow
+from add_ui import Ui_MainWindow1
+from add_order import Ui_MainWindow2
+from book import Ui_MainWindow3
+from club import Ui_MainWindow4
 
 conn = sqlite3.connect("culture_centr.db")
 cur = conn.cursor()
@@ -36,13 +41,14 @@ def convert_to_date(date):
 # check_date('03.12.2023', '08:49:00', '04.12.2023', '15:16:00')
 
 
-class App(QMainWindow):
+class App(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.titles = ['id', 'event_id', 'room', 'date_start', 'date_end',
                        'description', 'status', 'work_type']
         self.modified = []
-        uic.loadUi('ui.ui', self)
+        self.setupUi(self)
+        # uic.loadUi('ui.ui', self)
         self.initUi()
 
     def initUi(self):
@@ -153,6 +159,7 @@ class App(QMainWindow):
 
         self.add_btn_1_5.clicked.connect(self.open_club_from)
         self.del_btn_1_5.clicked.connect(self.del_club)
+        self.change_btn_1_5.clicked.connect(self.open_club_from)
     def add_type(self):
         type, ok_pressed = QInputDialog.getText(self, 'Введите тип мероприятия', '', )
         if ok_pressed:
@@ -261,6 +268,7 @@ class App(QMainWindow):
             self.model8.setEditStrategy(QSqlTableModel.OnFieldChange)
             self.model8.select()
             self.weekday_table.setModel(self.model8)
+            self.weekday_table.setEnabled(False)
             self.weekday_table.resizeColumnsToContents()
 
 
@@ -357,13 +365,24 @@ class App(QMainWindow):
             for i, row in enumerate(result):
                 self.club_table.setRowCount(self.club_table.rowCount() + 1)
                 for j, elem in enumerate(row):
+                    if elem is None:
+                        elem = ''
                     self.club_table.setItem(i, j, QTableWidgetItem(str(elem)))
             self.club_table.resizeColumnsToContents()
         except Exception as e:
             print(e)
 
     def open_club_from(self):
-        self.club_form = ClubForm(self)
+        data = []
+        if self.sender().objectName() == 'change_btn_1_5':
+            row = -1
+            for index in sorted(self.club_table.selectionModel().selectedRows()):
+                row = index.row()
+            if row == -1:
+                return None
+            for col in range(self.club_table.model().columnCount()):
+                data.append(self.club_table.model().data(self.club_table.model().index(row, col)))
+        self.club_form = ClubForm(self, data)
         self.club_form.show()
 
     def del_club(self):
@@ -734,11 +753,12 @@ id мероприятия: {data[1]}
             print(e)
 
 
-class SecondForm(QMainWindow):
+class SecondForm(QMainWindow, Ui_MainWindow1):
     def __init__(self, main):
         self.main = main
         super().__init__()
-        uic.loadUi('add_ui.ui', self)
+        self.setupUi(self)
+        # uic.loadUi('add_ui.ui', self)
         self.initUi()
 
     def initUi(self):
@@ -763,11 +783,13 @@ class SecondForm(QMainWindow):
     def cancel(self):
         self.close()
 
-class ClubForm(QMainWindow):
-    def __init__(self, main):
+class ClubForm(QMainWindow, Ui_MainWindow4):
+    def __init__(self, main, data):
         self.main = main
+        self.data = data
         super().__init__()
-        uic.loadUi('club.ui', self)
+        self.setupUi(self)
+        # uic.loadUi('club.ui', self)
         self.initUi()
 
     def initUi(self):
@@ -784,6 +806,21 @@ class ClubForm(QMainWindow):
         self.teacher_combo.clear()
         for i in teachers:
             self.teacher_combo.addItem(i[0])
+        if self.data:
+            self.name_edit.setText(self.data[1])
+            date_start = QtCore.QDate.fromString(self.data[2], 'dd.MM.yyyy')
+            self.date_start_edit.setDate(date_start)
+            self.club_type_combo.setCurrentText(self.data[3])
+            self.room_combo.setCurrentText(self.data[4])
+            self.teacher_combo.setCurrentText(self.data[10])
+            time_start = QtCore.QTime.fromString(self.data[8])
+            time_end = QtCore.QTime.fromString(self.data[9])
+            self.time_start_edit.setTime(time_start)
+            self.time_end_edit.setTime(time_end)
+            weekdays = [self.data[5], self.data[6], self.data[7]]
+            for btn in self.button_group.buttons():
+                if btn.text() in weekdays:
+                    btn.setChecked(True)
         for btn in self.button_group.buttons():
             btn.clicked.connect(self.ckeck_quantity)
         self.ok_btn.clicked.connect(self.add)
@@ -809,10 +846,16 @@ class ClubForm(QMainWindow):
         print(name, date_start, club_type_id, room_id, quantity, time_start, time_end, teacher_id)
         if quantity:
             self.label_error.setText('')
-            cur.execute("""INSERT INTO club(name, date_start, club_type_id, room_id, class_1, class_2, class_3, 
-                            time_start, time_end, teacher_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                        (name, date_start, club_type_id, room_id, quantity[0], quantity[1], quantity[2],
-                         time_start, time_end, teacher_id))
+            if self.data:
+                cur.execute("""UPDATE club SET name = ?, date_start = ?, club_type_id = ?, room_id = ?, class_1 = ?, 
+                                class_2 = ?, class_3 = ?, time_start = ?, time_end = ?, teacher_id = ? WHERE id = ?""",
+                            (name, date_start, club_type_id, room_id, quantity[0], quantity[1], quantity[2],
+                             time_start, time_end, teacher_id, self.data[0]))
+            else:
+                cur.execute("""INSERT INTO club(name, date_start, club_type_id, room_id, class_1, class_2, class_3, 
+                                time_start, time_end, teacher_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                            (name, date_start, club_type_id, room_id, quantity[0], quantity[1], quantity[2],
+                             time_start, time_end, teacher_id))
             conn.commit()
             self.main.load_data()
             self.close()
@@ -830,14 +873,14 @@ class ClubForm(QMainWindow):
         self.close()
 
 
-class OrderForm(QMainWindow):
+class OrderForm(QMainWindow, Ui_MainWindow2):
     def __init__(self, main, data):
         self.main = main
         self.data = data
         print(self.data)
         super().__init__()
-        # f1 = io.StringIO(add_ui_templ)
-        uic.loadUi('add_order.ui', self)
+        self.setupUi(self)
+        # uic.loadUi('add_order.ui', self)
         self.initUi()
 
     def initUi(self):
@@ -910,14 +953,15 @@ class OrderForm(QMainWindow):
         self.close()
 
 
-class BookForm(QMainWindow):
+class BookForm(QMainWindow, Ui_MainWindow3):
     def __init__(self, main, data, is_room):
         try:
             self.main = main
             self.data = data
             self.is_room = is_room
             super().__init__()
-            uic.loadUi('book.ui', self)
+            self.setupUi(self)
+            # uic.loadUi('book.ui', self)
             self.initUi()
         except Exception as e:
             print(e)
