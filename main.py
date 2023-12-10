@@ -844,7 +844,7 @@ class ClubForm(QMainWindow, Ui_MainWindow4):
         teacher_id = cur.execute("SELECT id FROM teacher WHERE name = ?",
                                    (self.teacher_combo.currentText(),)).fetchone()[0]
         print(name, date_start, club_type_id, room_id, quantity, time_start, time_end, teacher_id)
-        if quantity:
+        if quantity[0] != '':
             self.label_error.setText('')
             if self.data:
                 cur.execute("""UPDATE club SET name = ?, date_start = ?, club_type_id = ?, room_id = ?, class_1 = ?, 
