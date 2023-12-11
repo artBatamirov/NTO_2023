@@ -1,4 +1,5 @@
 import sys
+import traceback
 import io
 import sqlite3
 from PyQt5 import uic, QtCore
@@ -306,10 +307,10 @@ class App(QMainWindow, Ui_MainWindow):
                 self.combo_3_6.addItem(i[0])
 
             self.desktop_2.setColumnCount(6)
-            self.desktop_2.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
+            self.desktop_2.setHorizontalHeaderLabels(['id', 'event_id', 'room', 'date_start', 'date_end',
                                                       'description'])
             self.desktop_3.setColumnCount(6)
-            self.desktop_3.setHorizontalHeaderLabels(['id', 'event_id', 'room_id', 'date_start', 'date_end',
+            self.desktop_3.setHorizontalHeaderLabels(['id', 'event_id', 'room', 'date_start', 'date_end',
                                                       'description'])
 
             self.load_desktop()
@@ -323,8 +324,8 @@ class App(QMainWindow, Ui_MainWindow):
     def load_desktop(self):
         try:
             # рабочий стол
-            result = cur.execute("""SELECT id, event_id, room_id, date_start, date_end, description, work_type_id
-                                    FROM work_order WHERE status_id = 2""").fetchall()
+            result = cur.execute("""SELECT wo.id, event_id, r.name, date_start, date_end, description, work_type_id
+                                    FROM work_order as wo INNER JOIN room as r ON r.id = wo.room_id WHERE status_id = 2""").fetchall()
             self.desktop_2.setRowCount(0)
             self.desktop_3.setRowCount(0)
             if len(result) != 0:
@@ -399,10 +400,14 @@ class App(QMainWindow, Ui_MainWindow):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.resize(100, 100)
+        if data[5] != '':
+            week_days = ', '.join(data[5:8])
+        else:
+            week_days = ''
         msg.setText(
             f'''Вы дейсвительно хотите удалить данные?\nid: {data[0]}
 name: {data[1]}\ndate_start: {data[2]}\nclub_type: {data[3]}\nroom: {data[4]}
-classes: {data[5]}, {data[6]}, {data[7]}\ntime_start: {data[8]}\ntime_end: {data[9]}\nteacher: {data[10]}''')
+classes: {week_days}\ntime_start: {data[8]}\ntime_end: {data[9]}\nteacher: {data[10]}''')
         msg.setWindowTitle("Удалить данные")
         msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         retval = msg.exec_()
@@ -589,56 +594,55 @@ data_end: {data[5]}\ntime_end: {data[6]}\nroom: {data[7]}\ncomment: {data[8]}\np
             self.load_data()
 
     def del_order(self):
-        btn = {'del_btn_2_3': self.order_2, 'del_btn_3_3': self.order_3}
-        table = btn[self.sender().objectName()]
-        row = -1
-        for index in sorted(table.selectionModel().selectedRows()):
-            row = index.row()
-            # print('row', row)
-        # print(row, table.objectName())
-        data = []
-        if row == -1:
-            return None
-        for col in range(table.model().columnCount()):
-            data.append(table.model().data(table.model().index(row, col)))
-        # print(data, self.sender().objectName())
-
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
-        msg.resize(150, 100)
-
-        type = 'Null'
         try:
-            room = cur.execute("""SELECT name FROM room WHERE id = ?""", (data[2],)).fetchone()[0]
-            room = f'{room}({data[2]})'
-            work_type = cur.execute("""SELECT name FROM work_type WHERE id = ?""", (data[7],)).fetchone()[0]
-            work_type = f'{work_type}({data[7]})'
-            status = cur.execute("""SELECT name FROM status WHERE id = ?""", (data[6],)).fetchone()[0]
-            status = f'{status}({data[6]})'
+            btn = {'del_btn_2_3': self.order_2, 'del_btn_3_3': self.order_3}
+            table = btn[self.sender().objectName()]
+            row = -1
+            for index in sorted(table.selectionModel().selectedRows()):
+                row = index.row()
+                # print('row', row)
+            # print(row, table.objectName())
+            data = []
+            if row == -1:
+                return None
+            for col in range(table.model().columnCount()):
+                data.append(table.model().data(table.model().index(row, col)))
+            # print(data, self.sender().objectName())
+
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.resize(150, 100)
+
+            type = 'Null'
+            print(data[2])
+            room_id = cur.execute("""SELECT id FROM room WHERE name = ?""", (data[2],)).fetchone()[0]
+            room = f'{data[2]}({room_id})'
+            work_type_id = cur.execute("""SELECT id FROM work_type WHERE name = ?""", (data[7],)).fetchone()[0]
+            work_type = f'{data[7]}({work_type_id})'
+            status_id = cur.execute("""SELECT id FROM status WHERE name = ?""", (data[6],)).fetchone()[0]
+            status = f'{data[6]}({status_id})'
+
+            msg.setText(
+                f'''Вы дейсвительно хотите удалить данные?
+event_id: {data[1]}
+room: {room}
+date_start: {data[3]}
+date_end: {data[4]}
+description: {data[5]}
+status: {status}
+work_type: {work_type}''')
+
+            msg.setWindowTitle("Удалить данные")
+            msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            retval = msg.exec_()
+
+            if msg.clickedButton().text() == 'OK':
+
+                    cur.execute("""DELETE FROM work_order WHERE id = ?""", (data[0],))
+                    conn.commit()
+                    self.load_data()
         except Exception as e:
-            print(e)
-
-        msg.setText(
-            f'''Вы дейсвительно хотите удалить данные?
-id мероприятия: {data[1]}
-комната: {room}
-начало: {data[3]}
-конец: {data[4]}
-описание: {data[5]}
-статус: {status}
-вид работы: {work_type}''')
-
-        msg.setWindowTitle("Удалить данные")
-        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        retval = msg.exec_()
-
-        if msg.clickedButton().text() == 'OK':
-            try:
-                cur.execute("""DELETE FROM work_order WHERE id = ?""", (data[0],))
-                conn.commit()
-                self.load_data()
-            except Exception as e:
-                print(e)
+                print(e, traceback.format_exc())
 
     def change_order(self):
         btn = {'change_btn_2_3': self.order_2, 'change_btn_3_3': self.order_3}
@@ -971,6 +975,7 @@ class BookForm(QMainWindow, Ui_MainWindow3):
             self.label.setText('')
             self.setFixedSize(540, 420)
             self.start_edit.dateTimeChanged.connect(self.load)
+            self.part_combo.currentTextChanged.connect(self.load)
             self.end_edit.dateTimeChanged.connect(self.load)
             event_id_list = cur.execute("""SELECT id FROM event""").fetchall()
             room_list = cur.execute("""SELECT id, name FROM room""").fetchall()
@@ -1018,6 +1023,7 @@ class BookForm(QMainWindow, Ui_MainWindow3):
         except Exception as e:
             print(e)
 
+
     def load(self):
         try:
             if not self.is_room:
@@ -1027,40 +1033,57 @@ class BookForm(QMainWindow, Ui_MainWindow3):
                 time_end = self.end_edit.time().toString()
                 ds1 = convert_to_date(date_start + ' ' + time_start)
                 de1 = convert_to_date(date_end + ' ' + time_end)
+                room_parts = {'часть': 1, 'полностью': 2}
+                part = room_parts[self.part_combo.currentText()]
                 room_list = cur.execute("""SELECT r.id, name, b.date_start, b.time_start, b.date_end, 
-                                            b.time_end, b.id, b.part_of_room, division
+                                            b.time_end, b.id, b.part_of_room
                                             FROM room as r INNER JOIN booking as b ON r.id = b.room_id""").fetchall()
                 r_list = cur.execute("""SELECT id, name, division FROM room """).fetchall()
                 self.room_combo.clear()
-
+                div_dict = {}
+                lst = []
                 if len(room_list + r_list) == 0:
                     self.room_combo.addItem('забронировано')
                 if ds1 > de1:
                     self.room_combo.addItem('неправильная дата')
                 else:
                     not_corr = []
-                    lst = []
                     for i in room_list:
                         ds2 = convert_to_date(i[2] + ' ' + i[3])
                         de2 = convert_to_date(i[4] + ' ' + i[5])
                         if ((ds2 >= ds1 and ds2 <= de1) or (de2 >= ds1 and de2 <= de1) or
                             (ds1 >= ds2 and ds1 <= de2) or (de1 >= ds2 and de1 <= de2)):
-                            if len(self.data) == 9 and int(self.data[0]) == i[6]:
-                                print(self.data[0], i[6])
+
+                            if i[1] not in div_dict:
+                                div_dict[i[1]] = room_parts[i[7]]
+                            else:
+                                div_dict[i[1]] = div_dict[i[1]] + room_parts[i[7]]
+                            max_parts = cur.execute("SELECT division FROM room WHERE id = ?", (i[0], )).fetchone()[0]
+                            if (len(self.data) == 9 and int(self.data[0]) == i[6] or
+                                (part <= room_parts[i[7]] and div_dict[i[1]] <= max_parts - part and part <= max_parts)):
+                                print(i)
+
                             else:
                                 not_corr.append(i[1])
-                                print(ds1, de1, ds2, de2, i, False)
+                                print(ds1, de1, ds2, de2, i, 'совпадение дат')
                     print(not_corr)
                     print()
-                    for i in room_list + r_list:
-                        if i[1] not in not_corr and i[1] not in lst:
+                    for i in room_list:
+                        max_parts = cur.execute("SELECT division FROM room WHERE id = ?", (i[0],)).fetchone()[0]
+                        if i[1] not in not_corr and i[1] not in lst and part <= max_parts:
+                            self.room_combo.addItem(f'{i[1]}({i[0]})')
+                            lst.append(i[1])
+                    for i in r_list:
+                        max_parts = cur.execute("SELECT division FROM room WHERE id = ?", (i[0],)).fetchone()[0]
+                        if i[1] not in not_corr and i[1] not in lst and part <= max_parts:
                             self.room_combo.addItem(f'{i[1]}({i[0]})')
                             lst.append(i[1])
                 if len(self.data) == 9:
-                    r  =cur.execute("""SELECT id FROM room WHERE name = ?""", (self.data[7], )).fetchone()[0]
+                    r  = cur.execute("""SELECT id FROM room WHERE name = ?""", (self.data[7], )).fetchone()[0]
                     self.room_combo.setCurrentText(f'{self.data[7]}({r})')
+                print(lst, not_corr, div_dict, '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         except Exception as e:
-            print(e)
+            print(e, traceback.format_exc())
     def add(self):
         try:
 
